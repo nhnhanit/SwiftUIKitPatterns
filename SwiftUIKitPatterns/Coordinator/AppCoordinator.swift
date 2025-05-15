@@ -8,43 +8,55 @@
 import UIKit
 
 final class AppCoordinator {
-
     private let window: UIWindow
-    private var navigationController: UINavigationController?
+    private var navigationController: UINavigationController
+
+    private var authCoordinator: AuthCoordinator?
+    private var mainTabCoordinator: MainTabCoordinator?
 
     init(window: UIWindow) {
         self.window = window
+        self.navigationController = UINavigationController()
     }
 
     func start() {
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
         showSplash()
     }
 
-    private func showSplash() {
+    func showSplash() {
         let splashVC = SplashViewController()
         splashVC.onFinish = { [weak self] isLoggedIn in
             if isLoggedIn {
-                self?.showMain()
+                self?.showMain(tab: .home)
             } else {
-                self?.showLogin()
+                self?.startAuthFlow()
             }
         }
-
-        window.rootViewController = splashVC
-        window.makeKeyAndVisible()
+        navigationController.setViewControllers([splashVC], animated: false)
     }
 
-    private func showLogin() {
-        let loginVC = LoginViewController()
-        loginVC.onLoginSuccess = { [weak self] in
-            self?.showMain()
+    func startAuthFlow() {
+        let authCoordinator = AuthCoordinator(navigationController: navigationController)
+        self.authCoordinator = authCoordinator
+        authCoordinator.onAuthSuccess = { [weak self] in
+            self?.showMain(tab: .home)
         }
-        let nav = UINavigationController(rootViewController: loginVC)
-        window.rootViewController = nav
+        authCoordinator.start()
     }
 
-    private func showMain() {
-        let tabBar = MainTabBarController()
-        window.rootViewController = tabBar
+    func showMain(tab: MainTab) {
+        let mainTabCoordinator = MainTabCoordinator()
+        self.mainTabCoordinator = mainTabCoordinator
+        let mainVC = mainTabCoordinator.start(withInitialTab: tab)
+        navigationController.setViewControllers([mainVC], animated: true)
+    }
+  
+
+    func resetToSplash() {
+        mainTabCoordinator = nil
+        authCoordinator = nil
+        showSplash()
     }
 }
