@@ -52,7 +52,6 @@ final class AppCoordinator {
         let mainVC = mainTabCoordinator.start(withInitialTab: tab)
         navigationController.setViewControllers([mainVC], animated: true)
     }
-  
 
     func resetToSplash() {
         mainTabCoordinator = nil
