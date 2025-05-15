@@ -19,20 +19,19 @@ final class AuthCoordinator {
     func start() {
         let vm = LoginViewModel()
         vm.onPhoneSubmitted = { [weak self] phone in
-//            self?.showOTP(for: phone)
-            self?.onAuthSuccess?()
+            self?.showOTP(for: phone)
         }
         let vc = LoginModuleBuilder.build(viewModel: vm)
         navigationController.setViewControllers([vc], animated: false)
     }
 
     func showOTP(for phone: String) {
-//        let vm = OTPVerifyViewModel(phoneNumber: phone)
-//        vm.onVerified = { [weak self] in
-//            self?.onAuthSuccess?() // gọi sang AppCoordinator
-//        }
-//        let vc = OTPVerifyViewController(viewModel: vm)
-//        navigationController.pushViewController(vc, animated: true)
+        let vm = OTPVerifyViewModel(phoneNumber: phone)
+        vm.onVerified = { [weak self] in
+            self?.onAuthSuccess?() // callback to AppCoordinator
+        }
+        let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
+        navigationController.pushViewController(vc, animated: true)
     }
 
 }

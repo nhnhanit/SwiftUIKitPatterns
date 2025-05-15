@@ -40,6 +40,7 @@ final class AppCoordinator {
     func startAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController: navigationController)
         self.authCoordinator = authCoordinator
+        
         authCoordinator.onAuthSuccess = { [weak self] in
             self?.showMain(tab: .home)
         }
