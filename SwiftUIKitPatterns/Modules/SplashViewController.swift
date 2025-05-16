@@ -15,16 +15,19 @@ final class SplashViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        setupTitleLabel()
+        setupLayout()
         
-        // Giả lập loading & check login
+#warning("hardcode loading & check login")
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            let isLoggedIn = false // TODO: kiểm tra token thực tế
+            
+            // TODO: check authen token
+            
+            let isLoggedIn = false
             self.onFinish?(isLoggedIn)
         }
     }
     
-    private func setupTitleLabel() {
+    private func setupLayout() {
         let label = UILabel()
         label.text = "Splash Screen"
         label.textAlignment = .center

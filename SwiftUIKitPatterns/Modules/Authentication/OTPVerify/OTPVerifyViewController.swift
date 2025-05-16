@@ -46,9 +46,10 @@ final class OTPVerifyViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        
         setupLayout()
-        bindViewModel()
         configureUI()
+        bindViewModel()
         
 #warning("hardcode for testing")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -78,6 +79,12 @@ final class OTPVerifyViewController: UIViewController {
 
     private func bindViewModel() {
         // TODO: - validate text field and button
+        
+        otpTextField
+            .publisher(for: \.text)
+            .compactMap { $0 }
+            .sink { [weak self] in self?.viewModel.otpCode = $0 }
+            .store(in: &cancellables)
     }
 
     @objc private func didTapVerify() {
