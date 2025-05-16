@@ -8,6 +8,7 @@
 protocol SettingsNavigator: AnyObject {
     func navigateToUserProfile()
     func logout()
+    func showLogoutConfirmAlert(onConfirm: @escaping () -> Void)
 }
 
 extension MainTabCoordinator: SettingsNavigator {
@@ -21,4 +22,13 @@ extension MainTabCoordinator: SettingsNavigator {
         self.onLogout?()
     }
     
+    func showLogoutConfirmAlert(onConfirm: @escaping () -> Void) {
+        AlertManager.shared.show(type: .confirm(
+            title: "Logout",
+            message: "Are you sure you want to log out?",
+            confirmTitle: "Log Out",
+            cancelTitle: "Cancel",
+            onConfirm: onConfirm
+        ))
+    }
 }

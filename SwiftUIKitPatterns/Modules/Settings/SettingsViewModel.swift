@@ -15,7 +15,13 @@ final class SettingsViewModel {
     }
     
     func logoutTapped() {
-        navigator.logout()
+        navigator.showLogoutConfirmAlert(onConfirm: { [weak self] in
+            print("onConfirm logout")
+            
+            // TODO: - Call API logout
+            
+            self?.navigator.logout()
+        })
     }
     
     func userProfileTapped() {
