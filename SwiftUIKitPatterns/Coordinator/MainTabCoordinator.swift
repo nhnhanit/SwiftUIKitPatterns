@@ -14,6 +14,9 @@ enum MainTab {
 final class MainTabCoordinator {
     
     let tabBarController = UITabBarController()
+    var onLogout: (() -> Void)?
+    
+    var settingsNav: UINavigationController?
     
     func start(withInitialTab tab: MainTab) -> UITabBarController {
         let homeVC = HomeViewController()
@@ -23,9 +26,10 @@ final class MainTabCoordinator {
         
         let settingsVC = SettingsModuleBuilder.build(navigator: self)
         settingsVC.title = "Settings"
-        let settingsNav = UINavigationController(rootViewController: settingsVC)
+        var settingsNav = UINavigationController(rootViewController: settingsVC)
         settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
         
+        self.settingsNav = settingsNav
         tabBarController.viewControllers = [homeNav, settingsNav]
         
         switch tab {

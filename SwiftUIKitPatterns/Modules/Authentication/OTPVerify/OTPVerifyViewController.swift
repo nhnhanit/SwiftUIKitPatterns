@@ -45,6 +45,7 @@ final class OTPVerifyViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = "OTP Verify"
         view.backgroundColor = .systemBackground
         
         setupLayout()

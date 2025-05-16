@@ -16,13 +16,7 @@ final class SettingsViewModel {
     
     func logoutTapped() {
         SessionManager.shared.logOut()
-        
-        DispatchQueue.main.async {
-            AppRoot.shared.appCoordinator?.resetToSplash()
-        }
-        
-        // check
-        print("logoutTapped Login?", SessionManager.shared.isLoggedIn)
+        navigator.logout()
     }
     
     func userProfileTapped() {

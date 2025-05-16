@@ -53,12 +53,14 @@ final class AppCoordinator {
     
     func showMain(tab: MainTab) {
         let coordinator = MainTabCoordinator()
+        coordinator.onLogout = { [weak self] in
+            self?.resetToSplash()
+        }
         mainTabCoordinator = coordinator
         
         let mainVC = coordinator.start(withInitialTab: tab)
         setRootViewController(mainVC)
     }
-    
     
     func resetToSplash() {
         splashCoordinator = nil

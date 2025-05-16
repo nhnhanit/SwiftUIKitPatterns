@@ -9,15 +9,18 @@ import UIKit
 
 protocol SettingsNavigator: AnyObject {
     func navigateToUserProfile()
+    func logout()
 }
 
 extension MainTabCoordinator: SettingsNavigator {
+    
     func navigateToUserProfile() {
         let userProfileVC = UserProfileViewController()
-        if let nav = self.tabBarController.selectedViewController as? UINavigationController {
-            nav.pushViewController(userProfileVC, animated: true)
-        } else {
-            self.tabBarController.selectedViewController?.navigationController?.pushViewController(userProfileVC, animated: true)
-        }
+        self.settingsNav?.pushViewController(userProfileVC, animated: true)
     }
+    
+    func logout() {
+        self.onLogout?()
+    }
+    
 }

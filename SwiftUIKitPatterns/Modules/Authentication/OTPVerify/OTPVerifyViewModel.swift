@@ -33,16 +33,7 @@ final class OTPVerifyViewModel {
             
             let token = "1234"
             SessionManager.shared.logIn(with: token)
-            
-            // check
-            print("verifyOTP Login?", SessionManager.shared.isLoggedIn)
-            
             self?.onVerifySuccess?()
-            
-//            DispatchQueue.main.async {
-//                AppRoot.shared.appCoordinator?.showMain(tab: .home)
-//            }
-            
         }
     }
 }

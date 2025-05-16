@@ -19,13 +19,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         let window = UIWindow(windowScene: windowScene)
-        AppRoot.shared.start(in: window)
         self.window = window
+
+        let coordinator = AppCoordinator(window: window)
+        self.appCoordinator = coordinator
+        coordinator.start()
         
-//        let coordinator = AppCoordinator(window: window)
-//        self.appCoordinator = coordinator
-//        coordinator.start()
-//        self.window = window
+//        AppRoot.shared.start(in: window)
     }
     
     func sceneDidDisconnect(_ scene: UIScene) {
