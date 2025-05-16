@@ -8,9 +8,14 @@
 import UIKit
 
 protocol AppRootProtocol {
-    func resetToSplash()
+    func handleDeepLink()
 }
-extension AppRoot: AppRootProtocol {}
+
+extension AppRoot: AppRootProtocol {
+    func handleDeepLink() {
+        appCoordinator?.handleDeeplink()
+    }
+}
 
 final class AppRoot {
     static let shared = AppRoot()
@@ -26,12 +31,5 @@ final class AppRoot {
         self.appCoordinator = coordinator
         coordinator.start()
     }
-
-    func resetToSplash() {
-        appCoordinator?.resetToSplash()
-    }
-
-    func navigateToTab(_ tab: MainTab) {
-        appCoordinator?.showMain(tab: tab)
-    }
+    
 }

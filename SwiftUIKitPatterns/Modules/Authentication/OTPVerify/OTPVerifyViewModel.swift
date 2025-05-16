@@ -13,7 +13,6 @@ final class OTPVerifyViewModel {
     @Published var otpCode: String = ""
 
     let phoneNumber: String
-    var onVerified: (() -> Void)?
 
     init(phoneNumber: String) {
         self.phoneNumber = phoneNumber
@@ -29,10 +28,16 @@ final class OTPVerifyViewModel {
         
         // TODO: call API verify OTP
         
-#warning("hardcode for testing")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            let token = "1234"
+            SessionManager.shared.logIn(with: token)
             
-            SessionManager.shared.logIn(with: <#T##String#>)
+            DispatchQueue.main.async {
+                AppRoot.shared.appCoordinator?.showMain(tab: .home)
+            }
+            
+            // check
+            print("verifyOTP Login?", SessionManager.shared.isLoggedIn)
         }
     }
 }

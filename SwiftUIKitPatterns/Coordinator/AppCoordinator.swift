@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class AppCoordinator {
     private let window: UIWindow
@@ -13,6 +14,7 @@ final class AppCoordinator {
 
     private var authCoordinator: AuthCoordinator?
     private var mainTabCoordinator: MainTabCoordinator?
+    private var cancellables = Set<AnyCancellable>()
 
     init(window: UIWindow) {
         self.window = window
@@ -22,28 +24,28 @@ final class AppCoordinator {
     func start() {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
+        
+        print("After restart: logged in?", SessionManager.shared.isLoggedIn)
+        
         showSplash()
     }
-
+    
     func showSplash() {
-        let splashVC = SplashViewController()
-        splashVC.onFinish = { [weak self] isLoggedIn in
+        let vm = SplashViewModel()
+        vm.onFinish = { [weak self] isLoggedIn in
             if isLoggedIn {
                 self?.showMain(tab: .home)
             } else {
                 self?.startAuthFlow()
             }
         }
+        let splashVC = SplashModuleBuilder.build(viewModel: vm)
         navigationController.setViewControllers([splashVC], animated: false)
     }
 
     func startAuthFlow() {
         let authCoordinator = AuthCoordinator(navigationController: navigationController)
         self.authCoordinator = authCoordinator
-        
-        authCoordinator.onAuthSuccess = { [weak self] in
-            self?.showMain(tab: .home)
-        }
         authCoordinator.start()
     }
 
@@ -58,5 +60,9 @@ final class AppCoordinator {
         mainTabCoordinator = nil
         authCoordinator = nil
         showSplash()
+    }
+    
+    public func handleDeeplink() {
+        
     }
 }

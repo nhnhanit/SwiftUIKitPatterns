@@ -9,22 +9,23 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
-    var onFinish: ((Bool) -> Void)?
+    let viewModel: SplashViewModel
+    
+    init(viewModel: SplashViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         setupLayout()
-        
-#warning("hardcode loading & check login")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            
-            // TODO: check authen token
-            
-            let isLoggedIn = false
-            self.onFinish?(isLoggedIn)
-        }
+        viewModel.checkLoginStatus()
     }
     
     private func setupLayout() {

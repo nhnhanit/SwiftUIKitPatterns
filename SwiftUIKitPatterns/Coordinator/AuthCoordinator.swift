@@ -27,9 +27,6 @@ final class AuthCoordinator {
 
     func showOTP(for phone: String) {
         let vm = OTPVerifyViewModel(phoneNumber: phone)
-        vm.onVerified = { [weak self] in
-            self?.onAuthSuccess?() // callback to AppCoordinator
-        }
         let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
         navigationController.pushViewController(vc, animated: true)
     }
