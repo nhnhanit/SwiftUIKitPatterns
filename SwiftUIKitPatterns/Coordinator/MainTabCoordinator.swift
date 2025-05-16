@@ -26,7 +26,7 @@ final class MainTabCoordinator {
         
         let settingsVC = SettingsModuleBuilder.build(navigator: self)
         settingsVC.title = "Settings"
-        var settingsNav = UINavigationController(rootViewController: settingsVC)
+        let settingsNav = UINavigationController(rootViewController: settingsVC)
         settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
         
         self.settingsNav = settingsNav

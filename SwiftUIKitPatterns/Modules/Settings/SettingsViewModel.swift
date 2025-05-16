@@ -15,7 +15,6 @@ final class SettingsViewModel {
     }
     
     func logoutTapped() {
-        SessionManager.shared.logOut()
         navigator.logout()
     }
     

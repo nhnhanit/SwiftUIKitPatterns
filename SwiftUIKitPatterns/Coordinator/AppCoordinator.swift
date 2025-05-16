@@ -54,6 +54,7 @@ final class AppCoordinator {
     func showMain(tab: MainTab) {
         let coordinator = MainTabCoordinator()
         coordinator.onLogout = { [weak self] in
+            SessionManager.shared.logOut()
             self?.resetToSplash()
         }
         mainTabCoordinator = coordinator

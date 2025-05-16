@@ -5,8 +5,6 @@
 //  Created by hongnhan on 15/5/25.
 //
 
-import UIKit
-
 protocol SettingsNavigator: AnyObject {
     func navigateToUserProfile()
     func logout()

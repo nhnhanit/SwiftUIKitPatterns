@@ -43,7 +43,7 @@ final class LoginViewController: UIViewController {
         bindViewModel()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.phoneTextField.text = "0909090909"
+            self.phoneTextField.text = "0909009009"
             self.continueButton.isEnabled = true
         }
     }
