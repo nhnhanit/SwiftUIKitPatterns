@@ -8,27 +8,29 @@
 import UIKit
 
 final class AuthCoordinator {
-    private let navigationController: UINavigationController
-
-    var onAuthSuccess: (() -> Void)?
-
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
-    }
     
-    func start() {
+    var onFinish: (() -> Void)?
+    
+    private let navigationController = UINavigationController()
+    
+    func start() -> UIViewController {
         let vm = LoginViewModel()
         vm.onPhoneSubmitted = { [weak self] phone in
-            self?.showOTP(for: phone)
+            self?.navigateToOTP(for: phone)
         }
+        
         let vc = LoginModuleBuilder.build(viewModel: vm)
         navigationController.setViewControllers([vc], animated: false)
+        return navigationController
     }
-
-    func showOTP(for phone: String) {
+    
+    func navigateToOTP(for phone: String) {
         let vm = OTPVerifyViewModel(phoneNumber: phone)
+        vm.onVerifySuccess = { [weak self] in
+            self?.onFinish?()
+        }
         let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
         navigationController.pushViewController(vc, animated: true)
     }
-
+    
 }

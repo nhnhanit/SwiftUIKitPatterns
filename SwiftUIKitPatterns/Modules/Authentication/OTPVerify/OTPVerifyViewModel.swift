@@ -10,14 +10,15 @@ import Combine
 import Foundation
 
 final class OTPVerifyViewModel {
-    @Published var otpCode: String = ""
-
+    
+    var onVerifySuccess: (() -> Void)?
     let phoneNumber: String
 
     init(phoneNumber: String) {
         self.phoneNumber = phoneNumber
     }
-
+    
+    @Published var otpCode: String = ""
     var isVerifyEnabled: AnyPublisher<Bool, Never> {
         $otpCode
             .map { $0.count == 6 }
@@ -28,16 +29,20 @@ final class OTPVerifyViewModel {
         
         // TODO: call API verify OTP
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            
             let token = "1234"
             SessionManager.shared.logIn(with: token)
             
-            DispatchQueue.main.async {
-                AppRoot.shared.appCoordinator?.showMain(tab: .home)
-            }
-            
             // check
             print("verifyOTP Login?", SessionManager.shared.isLoggedIn)
+            
+            self?.onVerifySuccess?()
+            
+//            DispatchQueue.main.async {
+//                AppRoot.shared.appCoordinator?.showMain(tab: .home)
+//            }
+            
         }
     }
 }

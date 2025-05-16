@@ -16,13 +16,17 @@ final class MainTabCoordinator {
     let tabBarController = UITabBarController()
     
     func start(withInitialTab tab: MainTab) -> UITabBarController {
-        
         let homeVC = HomeViewController()
-        homeVC.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)
+        homeVC.title = "Home"
+        let homeNav = UINavigationController(rootViewController: homeVC)
+        homeNav.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)
         
         let settingsVC = SettingsModuleBuilder.build(navigator: self)
+        settingsVC.title = "Settings"
+        let settingsNav = UINavigationController(rootViewController: settingsVC)
+        settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
         
-        tabBarController.viewControllers = [homeVC, settingsVC]
+        tabBarController.viewControllers = [homeNav, settingsNav]
         
         switch tab {
         case .home:

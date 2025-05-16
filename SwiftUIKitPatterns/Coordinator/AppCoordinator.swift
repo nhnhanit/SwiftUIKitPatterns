@@ -10,59 +10,76 @@ import Combine
 
 final class AppCoordinator {
     private let window: UIWindow
-    private var navigationController: UINavigationController
-
+    
+    private var splashCoordinator: SplashCoordinator?
     private var authCoordinator: AuthCoordinator?
     private var mainTabCoordinator: MainTabCoordinator?
-    private var cancellables = Set<AnyCancellable>()
-
+    
     init(window: UIWindow) {
         self.window = window
-        self.navigationController = UINavigationController()
     }
-
+    
     func start() {
-        window.rootViewController = navigationController
-        window.makeKeyAndVisible()
-        
         print("After restart: logged in?", SessionManager.shared.isLoggedIn)
-        
         showSplash()
     }
     
     func showSplash() {
-        let vm = SplashViewModel()
-        vm.onFinish = { [weak self] isLoggedIn in
+        let coordinator = SplashCoordinator()
+        splashCoordinator = coordinator
+        
+        coordinator.onFinish = { [weak self] isLoggedIn in
             if isLoggedIn {
                 self?.showMain(tab: .home)
             } else {
                 self?.startAuthFlow()
             }
         }
-        let splashVC = SplashModuleBuilder.build(viewModel: vm)
-        navigationController.setViewControllers([splashVC], animated: false)
+        let splashVC = coordinator.start()
+        setRootViewController(splashVC)
     }
-
+    
     func startAuthFlow() {
-        let authCoordinator = AuthCoordinator(navigationController: navigationController)
-        self.authCoordinator = authCoordinator
-        authCoordinator.start()
+        let coordinator = AuthCoordinator()
+        authCoordinator = coordinator
+        
+        coordinator.onFinish = { [weak self] in
+            self?.showMain(tab: .home)
+        }
+        
+        let authVC = coordinator.start()
+        setRootViewController(authVC)
     }
-
+    
     func showMain(tab: MainTab) {
-        let mainTabCoordinator = MainTabCoordinator()
-        self.mainTabCoordinator = mainTabCoordinator
-        let mainVC = mainTabCoordinator.start(withInitialTab: tab)
-        navigationController.setViewControllers([mainVC], animated: true)
+        let coordinator = MainTabCoordinator()
+        mainTabCoordinator = coordinator
+        
+        let mainVC = coordinator.start(withInitialTab: tab)
+        setRootViewController(mainVC)
     }
-
+    
+    
     func resetToSplash() {
-        mainTabCoordinator = nil
+        splashCoordinator = nil
         authCoordinator = nil
+        mainTabCoordinator = nil
         showSplash()
     }
     
-    public func handleDeeplink() {
+    private func setRootViewController(_ vc: UIViewController) {
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
         
+        // Optional: Add custom transition
+        UIView.transition(with: window,
+                          duration: 0.3,
+                          options: .transitionCrossDissolve,
+                          animations: nil,
+                          completion: nil)
+    }
+    
+    public func handleDeeplink() {
+        // Handle deeplink globally
     }
 }
