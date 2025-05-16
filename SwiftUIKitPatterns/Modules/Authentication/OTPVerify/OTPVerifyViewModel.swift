@@ -31,7 +31,8 @@ final class OTPVerifyViewModel {
         
 #warning("hardcode for testing")
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.onVerified?()
+            
+            SessionManager.shared.logIn(with: <#T##String#>)
         }
     }
 }
