@@ -14,12 +14,16 @@ final class AuthCoordinator {
     private let navigationController = UINavigationController()
     
     func start() -> UIViewController {
-        let vm = LoginViewModel()
-        vm.onPhoneSubmitted = { [weak self] phone in
+        let networkService = DefaultNetworkService()
+        let authRepository = DefaultAuthRepository(network: networkService)
+        let authUseCase = DefaultAuthUseCase(repository: authRepository)
+
+        let loginViewModel = LoginViewModel(authUseCase: authUseCase)
+        loginViewModel.onPhoneSubmitted = { [weak self] phone in
             self?.navigateToOTP(for: phone)
         }
         
-        let vc = LoginModuleBuilder.build(viewModel: vm)
+        let vc = LoginModuleBuilder.build(viewModel: loginViewModel)
         navigationController.setViewControllers([vc], animated: false)
         return navigationController
     }
@@ -29,8 +33,12 @@ final class AuthCoordinator {
         vm.onVerifySuccess = { [weak self] in
             self?.onFinish?()
         }
+        
         let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
-        navigationController.pushViewController(vc, animated: true)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.navigationController.pushViewController(vc, animated: true)
+        }
     }
     
 }

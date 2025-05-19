@@ -10,6 +10,12 @@ import Combine
 import Foundation
 
 final class LoginViewModel {
+    private let authUseCase: AuthUseCase
+
+    init(authUseCase: AuthUseCase) {
+        self.authUseCase = authUseCase
+    }
+    
     @Published var phoneNumber: String = ""
 
     var isContinueEnabled: AnyPublisher<Bool, Never> {
@@ -21,8 +27,19 @@ final class LoginViewModel {
     // Closure for navigation, inject coordinator
     var onPhoneSubmitted: ((String) -> Void)?
 
-    func submitPhoneNumber() {
-        let trimmed = phoneNumber.trimmingCharacters(in: .whitespaces)
-        onPhoneSubmitted?(trimmed)
+    func continueButtonTapped() async {
+        let phone = phoneNumber.trimmingCharacters(in: .whitespaces)
+        
+        do {
+            _ = try await authUseCase.requestOTP(phone: phone)
+            onPhoneSubmitted?(phone)
+        } catch {
+            print("Failed to request OTP: \(error)")
+            // TODO: bạn có thể gọi delegate, closure hoặc gắn thêm published error
+            
+            DispatchQueue.main.async {
+                AlertManager.shared.show(type: .info(title: "error!", message: "\(error.localizedDescription)", dismissTitle: "ok"))
+            }
+        }
     }
 }

@@ -74,7 +74,22 @@ final class LoginViewController: UIViewController {
     }
     
     @objc private func didTapContinue() {
-        viewModel.submitPhoneNumber()
+        Task {
+            await self.showLoading(true)
+            await viewModel.continueButtonTapped()
+            await self.showLoading(false)
+        }
     }
+    
+    private func showLoading(_ show: Bool) {
+        if show {
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.startAnimating()
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: indicator)
+        } else {
+            navigationItem.rightBarButtonItem = nil
+        }
+    }
+    
 }
 
