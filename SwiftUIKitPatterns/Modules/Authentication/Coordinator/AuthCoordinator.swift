@@ -34,9 +34,8 @@ final class AuthCoordinator {
             self?.onFinish?()
         }
         
-        let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
-        
         DispatchQueue.main.async { [weak self] in
+            let vc = OTPVerifyModuleBuilder.build(viewModel: vm)
             self?.navigationController.pushViewController(vc, animated: true)
         }
     }

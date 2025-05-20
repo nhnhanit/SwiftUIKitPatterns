@@ -10,8 +10,10 @@ import Foundation
 protocol APIRequest {
     var baseURL: URL { get }
     var path: String { get }
-    var method: String { get }
+    var method: HTTPMethod { get }
     var headers: [String: String]? { get }
     var queryItems: [URLQueryItem]? { get }
     var body: Data? { get }
 }
+
+

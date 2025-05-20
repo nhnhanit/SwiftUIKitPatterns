@@ -1,15 +1,10 @@
 //
-//  AuthUseCase.swift
+//  DefaultAuthUseCase.swift
 //  SwiftUIKitPatterns
 //
 //  Created by hongnhan on 19/5/25.
 //
 
-
-protocol AuthUseCase {
-    func requestOTP(phone: String) async throws -> OTPResponse
-    func verifyOTP(phone: String, code: String) async throws -> LoginResponse
-}
 
 final class DefaultAuthUseCase: AuthUseCase {
     private let repository: AuthRepository
@@ -22,7 +17,7 @@ final class DefaultAuthUseCase: AuthUseCase {
         try await repository.sendOTP(to: phone)
     }
 
-    func verifyOTP(phone: String, code: String) async throws -> LoginResponse {
+    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponse {
         try await repository.verifyOTP(phone: phone, code: code)
     }
 }

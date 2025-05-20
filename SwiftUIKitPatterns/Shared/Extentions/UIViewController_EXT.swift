@@ -1,5 +1,5 @@
 //
-//  LoadingDisplaying.swift
+//  UIViewController+LoadingIndicator.swift
 //  SwiftUIKitPatterns
 //
 //  Created by hongnhan on 20/5/25.
@@ -9,11 +9,6 @@ import UIKit
 import ObjectiveC
 
 private var loadingOverlayKey: UInt8 = 0
-
-protocol LoadingDisplaying: AnyObject {
-    func showLoadingIndicator()
-    func hideLoadingIndicator()
-}
 
 extension UIViewController {
     
@@ -51,7 +46,7 @@ extension UIViewController {
             indicator.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
         ])
         
-        // Lưu vào associated object
+        // save to associated object
         self.loadingOverlay = overlay
     }
 

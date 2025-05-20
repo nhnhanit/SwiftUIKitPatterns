@@ -1,22 +1,10 @@
 //
-//  OTPResponse.swift
+//  VerifyOTPResponse.swift
 //  SwiftUIKitPatterns
 //
 //  Created by hongnhan on 19/5/25.
 //
 
-
-//struct OTPResponse: Decodable {
-//    let success: Bool
-//    let message: String
-//}
-
-struct OTPResponse: Decodable {
-    let title: String
-    let body: String
-    let userId: String
-    let id: Int
-}
 
 //struct LoginResponse: Decodable {
 //    let accessToken: String
@@ -24,7 +12,7 @@ struct OTPResponse: Decodable {
 //    let userId: String
 //}
 
-struct LoginResponse: Decodable {
+struct VerifyOTPResponse: Decodable {
     let title: String
     let body: String
     let userId: String

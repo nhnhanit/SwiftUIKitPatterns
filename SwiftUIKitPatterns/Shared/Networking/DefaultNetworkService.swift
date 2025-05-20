@@ -1,15 +1,11 @@
 //
-//  NetworkService.swift
+//  DefaultNetworkService.swift
 //  SwiftUI_0325
 //
 //  Created by hongnhan on 11/4/25.
 //
 
 import Foundation
-
-protocol NetworkServicing {
-    func send<T: Decodable>(_ request: APIRequest) async throws -> T
-}
 
 final class DefaultNetworkService: NetworkServicing {
     
@@ -28,7 +24,7 @@ final class DefaultNetworkService: NetworkServicing {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = request.method
+        urlRequest.httpMethod = request.method.rawValue
         urlRequest.allHTTPHeaderFields = request.headers
         urlRequest.httpBody = request.body
         

@@ -1,5 +1,5 @@
 //
-//  AuthAPI.swift
+//  AuthAPIRequest.swift
 //  SwiftUIKitPatterns
 //
 //  Created by hongnhan on 19/5/25.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum AuthAPI: APIRequest {
+enum AuthAPIRequest: APIRequest {
     
-    case requestOTP(phone: String)
-    case verifyOTP(phone: String, otp: String)
+    case requestOTP(OTPRequestBody)
+    case verifyOTP(VerifyOTPRequestBody)
     
     var baseURL: URL {
         URL(string: "https://jsonplaceholder.typicode.com")!
@@ -23,10 +23,10 @@ enum AuthAPI: APIRequest {
         }
     }
     
-    var method: String {
+    var method: HTTPMethod {
         switch self {
         case .requestOTP, .verifyOTP:
-            return HTTPMethod.post.rawValue
+            return .post
         }
     }
     
@@ -38,10 +38,10 @@ enum AuthAPI: APIRequest {
     
     var body: Data? {
         switch self {
-        case .requestOTP(let phone):
-            return try? JSONEncoder().encode(["title": phone, "body": phone, "userId": "1"])
-        case .verifyOTP(let phone, let otp):
-            return try? JSONEncoder().encode(["title": phone, "body": otp, "userId": "1"])
+        case .requestOTP(let model):
+            return try? JSONEncoder().encode(model)
+        case .verifyOTP(let model):
+            return try? JSONEncoder().encode(model)
         }
     }
 }
