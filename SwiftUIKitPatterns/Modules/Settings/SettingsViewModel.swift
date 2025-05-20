@@ -14,17 +14,22 @@ final class SettingsViewModel {
         self.navigator = navigator
     }
     
-    func logoutTapped() {
-        navigator.showLogoutConfirmAlert(onConfirm: { [weak self] in
-            print("onConfirm logout")
-            
-            // TODO: - Call API logout
-            
-            self?.navigator.logout()
-        })
+    func logoutButtonTapped() {
+        let alertModel = AlertModel(title: "Confirm logout",
+                                    message: "Are you sure you want to log out?",
+                                    actions: [
+                                        .init(title: "Log out", style: .default, handler: {
+                                            
+                                            // TODO: - Call API logout if need
+                                            
+                                            self.navigator.navigateLogout()
+                                        }),
+                                        .cancel()
+                                    ])
+        navigator.showLogoutConfirmAlert(alertModel: alertModel)
     }
     
-    func userProfileTapped() {
+    func profileButtonTapped() {
         navigator.navigateToUserProfile()
     }
 }

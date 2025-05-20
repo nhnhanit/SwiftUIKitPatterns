@@ -10,21 +10,39 @@ import UIKit
 final class AlertManager {
 
     static let shared = AlertManager()
+
     private var isPresenting = false
+    private var alertQueue: [AlertModel] = []
     private init() {}
 
-    func show(type: AlertType, from viewController: UIViewController? = nil) {
-        guard !isPresenting else { return }
-
-        let alert = AlertBuilder.build(from: type) { [weak self] in
-            self?.isPresenting = false
-        }
-
+    func show(_ model: AlertModel, from viewController: UIViewController? = nil) {
         let presenter = viewController ?? Self.topViewController()
         guard let presenter else { return }
 
+        alertQueue.append(model)
+        showNextIfNeeded(from: presenter)
+    }
+
+    private func showNextIfNeeded(from presenter: UIViewController) {
+        guard !isPresenting, !alertQueue.isEmpty else { return }
+
         isPresenting = true
-        presenter.present(alert, animated: true)
+        let nextModel = alertQueue.removeFirst()
+
+        let alert = UIAlertController(title: nextModel.title, message: nextModel.message, preferredStyle: .alert)
+
+        for action in nextModel.actions {
+            let alertAction = UIAlertAction(title: action.title, style: action.style.toUIAlertStyle()) { [weak self] _ in
+                action.handler?()
+                self?.isPresenting = false
+                self?.showNextIfNeeded(from: presenter)
+            }
+            alert.addAction(alertAction)
+        }
+
+        DispatchQueue.main.async { [weak presenter] in
+            presenter?.present(alert, animated: true)
+        }
     }
 
     private static func topViewController(base: UIViewController? = UIApplication.shared.connectedScenes

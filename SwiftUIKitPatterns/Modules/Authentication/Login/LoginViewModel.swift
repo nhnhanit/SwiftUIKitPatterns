@@ -11,35 +11,56 @@ import Foundation
 
 final class LoginViewModel {
     private let authUseCase: AuthUseCase
-
+    
     init(authUseCase: AuthUseCase) {
         self.authUseCase = authUseCase
     }
     
-    @Published var phoneNumber: String = ""
+    // Closure for navigation, inject coordinator
+    var onPhoneSubmitted: ((String) -> Void)?
+    var onShowAlert: ((AlertModel) -> Void)?
 
+    @Published var isLoading: Bool = false
+    @Published var phoneNumber: String = ""
     var isContinueEnabled: AnyPublisher<Bool, Never> {
         $phoneNumber
             .map { $0.count >= 9 && $0.hasPrefix("0") }
             .eraseToAnyPublisher()
     }
-
-    // Closure for navigation, inject coordinator
-    var onPhoneSubmitted: ((String) -> Void)?
-
+    
     func continueButtonTapped() async {
         let phone = phoneNumber.trimmingCharacters(in: .whitespaces)
+        
+        print("phone:", phone)
+        // ✅ Step 1: Validate input
+        guard isValidPhoneNumber(phone) else {
+            self.onShowAlert?(AlertModel(
+                title: "Invalid Input",
+                message: "Phone number is not valid",
+                actions: [
+                    .ok()
+                ]
+            ))
+            return
+        }
+        
+        // ✅ Step 2: API call
+        isLoading = true
+        defer { isLoading = false }
         
         do {
             _ = try await authUseCase.requestOTP(phone: phone)
             onPhoneSubmitted?(phone)
         } catch {
             print("Failed to request OTP: \(error)")
-            // TODO: bạn có thể gọi delegate, closure hoặc gắn thêm published error
-            
-            DispatchQueue.main.async {
-                AlertManager.shared.show(type: .info(title: "error!", message: "\(error.localizedDescription)", dismissTitle: "ok"))
-            }
+            let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+            self.onShowAlert?(alertModel)
         }
     }
+    
+    private func isValidPhoneNumber(_ phone: String) -> Bool {
+        // Replace with real logic (regex or use lib like PhoneNumberKit)
+        return phone.count >= 10
+    }
+    
 }

@@ -6,20 +6,27 @@
 //
 
 
+//struct OTPResponse: Decodable {
+//    let success: Bool
+//    let message: String
+//}
+
 struct OTPResponse: Decodable {
-    let success: Bool
-    let message: String
+    let title: String
+    let body: String
+    let userId: String
+    let id: Int
 }
 
-//struct OTPResponse: Decodable {
-//    let title: String
-//    let body: String
+//struct LoginResponse: Decodable {
+//    let accessToken: String
+//    let refreshToken: String
 //    let userId: String
-//    let id: Int
 //}
 
 struct LoginResponse: Decodable {
-    let accessToken: String
-    let refreshToken: String
+    let title: String
+    let body: String
     let userId: String
+    let id: Int
 }

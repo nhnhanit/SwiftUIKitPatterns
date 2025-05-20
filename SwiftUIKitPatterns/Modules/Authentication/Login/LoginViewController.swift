@@ -40,6 +40,7 @@ final class LoginViewController: UIViewController {
         self.title = "login"
         view.backgroundColor = .systemBackground
         setupLayout()
+        configureUI()
         bindViewModel()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -60,8 +61,10 @@ final class LoginViewController: UIViewController {
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24)
         ])
         
-        continueButton.addTarget(self, action: #selector(didTapContinue), for: .touchUpInside)
+        continueButton.addTarget(self, action: #selector(didTapContinueButton), for: .touchUpInside)
     }
+    
+    private func configureUI() { }
     
     private func bindViewModel() {
         // TODO: - validate text field and button
@@ -71,23 +74,23 @@ final class LoginViewController: UIViewController {
             .compactMap { $0 }
             .sink { [weak self] in self?.viewModel.phoneNumber = $0 }
             .store(in: &cancellables)
-    }
-    
-    @objc private func didTapContinue() {
-        Task {
-            await self.showLoading(true)
-            await viewModel.continueButtonTapped()
-            await self.showLoading(false)
+        
+        viewModel.$isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                isLoading ? self?.showLoadingIndicator() : self?.hideLoadingIndicator()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.onShowAlert = { alertModel in
+            AlertManager.shared.show(alertModel)
         }
+        
     }
     
-    private func showLoading(_ show: Bool) {
-        if show {
-            let indicator = UIActivityIndicatorView(style: .medium)
-            indicator.startAnimating()
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: indicator)
-        } else {
-            navigationItem.rightBarButtonItem = nil
+    @objc private func didTapContinueButton() {
+        Task {
+            await viewModel.continueButtonTapped()
         }
     }
     

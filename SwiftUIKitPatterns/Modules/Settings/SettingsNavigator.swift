@@ -7,28 +7,22 @@
 
 protocol SettingsNavigator: AnyObject {
     func navigateToUserProfile()
-    func logout()
-    func showLogoutConfirmAlert(onConfirm: @escaping () -> Void)
+    func navigateLogout()
+    func showLogoutConfirmAlert(alertModel: AlertModel)
 }
 
 extension MainTabCoordinator: SettingsNavigator {
     
-    func navigateToUserProfile() {
-        let userProfileVC = UserProfileViewController()
-        self.settingsNav?.pushViewController(userProfileVC, animated: true)
+    func showLogoutConfirmAlert(alertModel: AlertModel) {
+        AlertManager.shared.show(alertModel)
     }
     
-    func logout() {
+    func navigateLogout() {
         self.onLogout?()
     }
     
-    func showLogoutConfirmAlert(onConfirm: @escaping () -> Void) {
-        AlertManager.shared.show(type: .confirm(
-            title: "Logout",
-            message: "Are you sure you want to log out?",
-            confirmTitle: "Log Out",
-            cancelTitle: "Cancel",
-            onConfirm: onConfirm
-        ))
+    func navigateToUserProfile() {
+        let userProfileVC = UserProfileViewController()
+        self.settingsNav?.pushViewController(userProfileVC, animated: true)
     }
 }

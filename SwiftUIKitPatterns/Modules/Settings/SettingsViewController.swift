@@ -25,13 +25,20 @@ final class SettingsViewController: UIViewController {
         title = "Settings"
         view.backgroundColor = .systemBackground
         
+        setupLayout()
+        configureUI()
+        bindViewModel()
+        
+    }
+    
+    private func setupLayout() {
         let logoutButton = UIButton(type: .system)
         logoutButton.setTitle("Log Out", for: .normal)
-        logoutButton.addTarget(self, action: #selector(logoutTapped), for: .touchUpInside)
+        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         
         let profileButton = UIButton(type: .system)
         profileButton.setTitle("Go to Profile", for: .normal)
-        profileButton.addTarget(self, action: #selector(profileTapped), for: .touchUpInside)
+        profileButton.addTarget(self, action: #selector(didTapProfileButton), for: .touchUpInside)
         
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         profileButton.translatesAutoresizingMaskIntoConstraints = false
@@ -48,12 +55,16 @@ final class SettingsViewController: UIViewController {
         ])
     }
     
-    @objc private func logoutTapped() {
-        viewModel.logoutTapped()
+    private func configureUI() { }
+    
+    private func bindViewModel() { }
+    
+    @objc private func didTapLogoutButton() {
+        viewModel.logoutButtonTapped()
     }
     
-    @objc private func profileTapped() {
-        viewModel.userProfileTapped()
+    @objc private func didTapProfileButton() {
+        viewModel.profileButtonTapped()
     }
 }
 
