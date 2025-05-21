@@ -7,6 +7,6 @@
 
 
 protocol AuthUseCase {
-    func requestOTP(phone: String) async throws -> OTPRespone
-    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPRespone
+    func requestOTP(phone: String) async throws -> OTPResponse
+    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponse
 }

@@ -11,7 +11,7 @@ struct OTPResponseDTO: Decodable {
 }
 
 extension OTPResponseDTO {
-    func toDomain() -> OTPRespone {
-        OTPRespone(phone: self.phone)
+    func toDomain() -> OTPResponse {
+        OTPResponse(phone: self.phone)
     }
 }

@@ -12,10 +12,10 @@ import Foundation
 final class OTPVerifyViewModel {
     
     var onVerifySuccess: (() -> Void)?
-    let otpRespone: OTPRespone
+    let otpResponse: OTPResponse
 
-    init(otpRespone: OTPRespone) {
-        self.otpRespone = otpRespone
+    init(otpResponse: OTPResponse) {
+        self.otpResponse = otpResponse
     }
     
     @Published var otpCode: String = ""

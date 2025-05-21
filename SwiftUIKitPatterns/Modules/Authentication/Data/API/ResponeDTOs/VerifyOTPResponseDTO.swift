@@ -11,7 +11,7 @@ struct VerifyOTPResponseDTO: Decodable {
 }
 
 extension VerifyOTPResponseDTO {
-    func toDomain() -> VerifyOTPRespone {
-        VerifyOTPRespone(phone: self.phone)
+    func toDomain() -> VerifyOTPResponse {
+        VerifyOTPResponse(phone: self.phone)
     }
 }

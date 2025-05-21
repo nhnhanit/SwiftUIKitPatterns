@@ -17,7 +17,7 @@ final class LoginViewModel {
     }
     
     // Closure for navigation, inject coordinator
-    var onRequestOTPSuccess: ((OTPRespone) -> Void)?
+    var onRequestOTPSuccess: ((OTPResponse) -> Void)?
     var onShowAlert: ((AlertModel) -> Void)?
 
     @Published var isLoading: Bool = false
