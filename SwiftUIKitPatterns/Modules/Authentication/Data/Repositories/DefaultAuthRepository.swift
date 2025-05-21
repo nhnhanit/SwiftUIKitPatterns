@@ -13,13 +13,13 @@ final class DefaultAuthRepository: AuthRepository {
         self.network = network
     }
 
-    func sendOTP(to phone: String) async throws -> OTPResponse {
-        let requestModel = OTPRequestBody(phone: phone)
+    func sendOTP(to phone: String) async throws -> OTPResponseDTO {
+        let requestModel = OTPRequestModel(phone: phone)
         return try await network.send(AuthAPIRequest.requestOTP(requestModel))
     }
 
-    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponse {
-        let requestModel = VerifyOTPRequestBody(phone: phone, otp: code)
+    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponseDTO {
+        let requestModel = VerifyOTPRequestModel(phone: phone, otp: code)
         return try await network.send(AuthAPIRequest.verifyOTP(requestModel))
     }
 }

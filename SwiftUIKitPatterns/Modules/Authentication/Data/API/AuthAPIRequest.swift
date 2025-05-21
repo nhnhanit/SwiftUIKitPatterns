@@ -9,8 +9,8 @@ import Foundation
 
 enum AuthAPIRequest: APIRequest {
     
-    case requestOTP(OTPRequestBody)
-    case verifyOTP(VerifyOTPRequestBody)
+    case requestOTP(OTPRequestModel)
+    case verifyOTP(VerifyOTPRequestModel)
     
     var baseURL: URL {
         URL(string: "https://jsonplaceholder.typicode.com")!
