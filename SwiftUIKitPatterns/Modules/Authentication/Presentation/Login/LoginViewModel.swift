@@ -59,7 +59,9 @@ final class LoginViewModel {
     }
     
     private func isValidPhoneNumber(_ phone: String) -> Bool {
-        // Replace with real logic (regex or use lib like PhoneNumberKit)
+        
+        // TODO: - Replace with real logic (regex or use lib like PhoneNumberKit)
+        
         return phone.count >= 10
     }
     
