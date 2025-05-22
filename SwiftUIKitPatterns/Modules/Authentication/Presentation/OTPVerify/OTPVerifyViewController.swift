@@ -9,7 +9,6 @@ import UIKit
 import Combine
 
 final class OTPVerifyViewController: UIViewController {
-    private let viewModel: OTPVerifyViewModel
 
     private let phoneNumberLabel: UILabel = {
         let label = UILabel()
@@ -35,6 +34,7 @@ final class OTPVerifyViewController: UIViewController {
     }()
 
     private var cancellables = Set<AnyCancellable>()
+    private let viewModel: OTPVerifyViewModel
 
     init(viewModel: OTPVerifyViewModel) {
         self.viewModel = viewModel

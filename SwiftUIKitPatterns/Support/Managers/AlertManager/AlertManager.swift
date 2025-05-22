@@ -40,8 +40,16 @@ final class AlertManager {
             alert.addAction(alertAction)
         }
 
-        DispatchQueue.main.async { [weak presenter] in
-            presenter?.present(alert, animated: true)
+        DispatchQueue.main.async { [weak self, weak presenter] in
+            guard let self = self, let presenter = presenter, presenter.view.window != nil else {
+                self?.isPresenting = false
+                if let fallbackPresenter = Self.topViewController() {
+                    self?.showNextIfNeeded(from: fallbackPresenter)
+                }
+                return
+            }
+
+            presenter.present(alert, animated: true)
         }
     }
 

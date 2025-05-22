@@ -19,7 +19,12 @@ final class MainTabCoordinator {
     var settingsNav: UINavigationController?
     
     func start(withInitialTab tab: MainTab) -> UITabBarController {
-        let homeVC = HomeViewController()
+        let networkService = DefaultNetworkService()
+        let postRepository = DefaultPostRepository(network: networkService)
+        let postUseCase = DefaultPostUseCase(repository: postRepository)
+
+        let postsListViewModel = PostsListViewModel(postUseCase: postUseCase)
+        let homeVC = PostsListModuleBuilder.build(viewModel: postsListViewModel)
         homeVC.title = "Home"
         let homeNav = UINavigationController(rootViewController: homeVC)
         homeNav.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)

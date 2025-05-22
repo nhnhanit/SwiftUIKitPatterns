@@ -1,0 +1,21 @@
+//
+//  DefaultPostUseCase.swift
+//  SwiftUIKitPatterns
+//
+//  Created by hongnhan on 22/5/25.
+//
+
+
+final class DefaultPostUseCase: PostUseCase {
+    
+    private let repository: PostRepository
+
+    init(repository: PostRepository) {
+        self.repository = repository
+    }
+    
+    func loadPostsList() async throws -> [Post] {
+        return try await repository.fetchPostsList()
+    }
+    
+}
