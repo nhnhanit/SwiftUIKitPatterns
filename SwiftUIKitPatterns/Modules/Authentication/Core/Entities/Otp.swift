@@ -1,10 +1,11 @@
 //
-//  VerifyOTPResponse.swift
+//  Otp.swift
 //  SwiftUIKitPatterns
 //
 //  Created by hongnhan on 21/5/25.
 //
 
-struct VerifyOTPResponse {
+struct Otp {
     let phone: String
+    let otpExpiresIn: Int
 }

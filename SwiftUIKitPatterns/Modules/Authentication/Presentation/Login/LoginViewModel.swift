@@ -17,7 +17,7 @@ final class LoginViewModel {
     }
     
     // Closure for navigation, inject coordinator
-    var onRequestOTPSuccess: ((OTPResponse) -> Void)?
+    var onRequestOTPSuccess: ((Otp) -> Void)?
     var onShowAlert: ((AlertModel) -> Void)?
 
     @Published var isLoading: Bool = false
@@ -49,8 +49,8 @@ final class LoginViewModel {
         defer { isLoading = false }
         
         do {
-            let otpResponse = try await authUseCase.requestOTP(phone: phone)
-            onRequestOTPSuccess?(otpResponse)
+            let otp = try await authUseCase.requestOTP(phone: phone)
+            onRequestOTPSuccess?(otp)
         } catch {
             print("Failed to request OTP: \(error)")
             let alertModel = AlertModel(title: "Error", message: error.localizedDescription)

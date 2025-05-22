@@ -8,4 +8,5 @@
 
 struct OTPRequestModel: Encodable {
     let phone: String
+    let otpExpiresIn: Int = 30 // seconds
 }

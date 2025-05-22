@@ -19,8 +19,8 @@ final class AuthCoordinator {
         let authUseCase = DefaultAuthUseCase(repository: authRepository)
 
         let loginViewModel = LoginViewModel(authUseCase: authUseCase)
-        loginViewModel.onRequestOTPSuccess = { [weak self] otpResponse in
-            self?.navigateToOTP(for: otpResponse)
+        loginViewModel.onRequestOTPSuccess = { [weak self] otp in
+            self?.navigateToOTP(for: otp.phone, otpExpiresIn: otp.otpExpiresIn)
         }
         
         let vc = LoginModuleBuilder.build(viewModel: loginViewModel)
@@ -28,8 +28,8 @@ final class AuthCoordinator {
         return navigationController
     }
     
-    func navigateToOTP(for otpResponse: OTPResponse) {
-        let vm = OTPVerifyViewModel(otpResponse: otpResponse)
+    func navigateToOTP(for phoneNumber: String, otpExpiresIn: Int) {
+        let vm = OTPVerifyViewModel(phoneNumber: phoneNumber, otpExpiresIn: otpExpiresIn)
         vm.onVerifySuccess = { [weak self] in
             self?.onFinish?()
         }

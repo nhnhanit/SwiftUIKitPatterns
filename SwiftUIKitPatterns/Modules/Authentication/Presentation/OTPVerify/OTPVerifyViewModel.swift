@@ -12,10 +12,16 @@ import Foundation
 final class OTPVerifyViewModel {
     
     var onVerifySuccess: (() -> Void)?
-    let otpResponse: OTPResponse
+    let phoneNumber: String
+    let otpExpiresIn: Int
+    @Published var otpVerifyViewState: OTPVerifyViewState
 
-    init(otpResponse: OTPResponse) {
-        self.otpResponse = otpResponse
+    init(phoneNumber: String, otpExpiresIn: Int) {
+        self.phoneNumber = phoneNumber
+        self.otpExpiresIn = otpExpiresIn
+        
+        otpVerifyViewState = OTPVerifyViewState(instructionText: "OTP sent to phone number: \(phoneNumber)",
+                                                initialCountdown: otpExpiresIn)
     }
     
     @Published var otpCode: String = ""

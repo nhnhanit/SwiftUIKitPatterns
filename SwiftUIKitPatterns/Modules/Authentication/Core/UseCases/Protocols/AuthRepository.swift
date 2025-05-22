@@ -7,6 +7,6 @@
 
 
 protocol AuthRepository {
-    func sendOTP(to phone: String) async throws -> OTPResponse
-    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponse
+    func sendOTP(to phone: String) async throws -> Otp
+    func verifyOTP(phone: String, code: String) async throws -> VerifyOtp
 }

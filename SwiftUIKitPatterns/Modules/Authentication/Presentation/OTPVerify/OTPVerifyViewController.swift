@@ -75,7 +75,7 @@ final class OTPVerifyViewController: UIViewController {
     }
     
     private func configureUI() {
-        phoneNumberLabel.text = "OTP sent to: \(viewModel.otpResponse.phone)"
+        phoneNumberLabel.text = viewModel.otpVerifyViewState.instructionText
     }
 
     private func bindViewModel() {

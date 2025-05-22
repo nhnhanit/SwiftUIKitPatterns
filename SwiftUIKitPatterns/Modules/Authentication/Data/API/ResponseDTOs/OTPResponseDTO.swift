@@ -7,11 +7,13 @@
 
 struct OTPResponseDTO: Decodable {
     let phone: String
+    let otpExpiresIn: Int
     let id: Int
 }
 
 extension OTPResponseDTO {
-    func toDomain() -> OTPResponse {
-        OTPResponse(phone: self.phone)
+    func toDomain() -> Otp {
+        Otp(phone: self.phone,
+            otpExpiresIn: self.otpExpiresIn)
     }
 }

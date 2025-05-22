@@ -13,11 +13,11 @@ final class DefaultAuthUseCase: AuthUseCase {
         self.repository = repository
     }
 
-    func requestOTP(phone: String) async throws -> OTPResponse {
+    func requestOTP(phone: String) async throws -> Otp {
         return try await repository.sendOTP(to: phone)
     }
 
-    func verifyOTP(phone: String, code: String) async throws -> VerifyOTPResponse {
+    func verifyOTP(phone: String, code: String) async throws -> VerifyOtp {
         return try await repository.verifyOTP(phone: phone, code: code)
     }
 }
