@@ -13,6 +13,7 @@ final class PostsListViewModel {
     @MainActor @Published private(set) var isLoading: Bool = false        // loading lần đầu
     @MainActor @Published private(set) var isLoadMore: Bool = false       // loading thêm
     @MainActor @Published private(set) var isLastPage: Bool = false       // không còn dữ liệu
+    @MainActor private(set) var deletingPostIds: Set<Int> = []
 
     var onShowAlert: ((AlertModel) -> Void)?
     
@@ -85,5 +86,37 @@ final class PostsListViewModel {
             self.currentPage = 0
             fetchPosts()
         }
+    }
+    
+    func deletePost(postId: Int) async -> Bool {
+        guard await !deletingPostIds.contains(postId) else {
+            return false // đang xoá, không xử lý nữa
+        }
+
+        await MainActor.run {
+            let _ = deletingPostIds.insert(postId)
+        }
+
+        defer {
+            Task { @MainActor in
+                deletingPostIds.remove(postId)
+            }
+        }
+
+        do {
+            let _ = try await postUseCase.deletePost(postId: postId)
+            return true
+        } catch {
+            await MainActor.run {
+                let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+                onShowAlert?(alertModel)
+            }
+            return false
+        }
+    }
+    
+    @MainActor
+    func removePost(postId: Int) {
+        self.posts.removeAll { $0.id == postId }
     }
 }

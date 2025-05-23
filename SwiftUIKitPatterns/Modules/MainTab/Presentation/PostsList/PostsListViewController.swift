@@ -84,7 +84,7 @@ final class PostsListViewController: UIViewController {
                 
             }
             .store(in: &cancellables)
-               
+        
         viewModel.$isLastPage
             .receive(on: RunLoop.main)
             .sink { [weak self] isLastPage in
@@ -132,6 +132,8 @@ extension PostsListViewController: UITableViewDataSource {
         }
         
         let post = viewModel.posts[indexPath.row]
+        
+        cell.delegate = self
         cell.configure(with: post)
         
         return cell
@@ -159,6 +161,23 @@ extension PostsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension // Cho phép cell tự động tính chiều cao
     }
+}
+
+extension PostsListViewController: PostTableViewCellDelegate {
+    
+    func postCellDidTapDelete(_ cell: PostTableViewCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let post = viewModel.posts[indexPath.row]
+        
+        Task {
+            let success = await viewModel.deletePost(postId: post.id)
+            guard success else { return }
+            
+            viewModel.removePost(postId: post.id)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
 }
 
 

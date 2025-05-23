@@ -6,6 +6,7 @@
 //
 
 final class DefaultPostRepository: PostRepository {
+    
     private let network: NetworkServicing
 
     init(network: NetworkServicing) {
@@ -18,4 +19,7 @@ final class DefaultPostRepository: PostRepository {
         return postsList
     }
 
+    func deletePost(postId: Int) async throws {
+        let emptyResponse: EmptyResponse = try await network.send(PostAPIRequest.deletePost(postId: postId))
+    }
 }

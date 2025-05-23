@@ -10,11 +10,14 @@ import Foundation
 enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
     
     case fetchPosts(start: Int, limit: Int)
+    case deletePost(postId: Int)
     
     var requiresAuthorization: Bool {
         switch self {
         case .fetchPosts:
             return false // API public dont need accessToken
+        case .deletePost:
+            return true
             //        case .fetchComments, .fetchUser, .deletePost:
             //            return true
         }
@@ -28,6 +31,8 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
         switch self {
         case .fetchPosts:
             return "/posts"
+        case .deletePost(let postId):
+            return "/posts/\(postId)"
         }
     }
     
@@ -35,6 +40,8 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
         switch self {
         case .fetchPosts:
             return .get
+        case .deletePost:
+            return .delete
         }
     }
     
@@ -49,6 +56,8 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
                 URLQueryItem(name: "_start", value: "\(start)"),
                 URLQueryItem(name: "_limit", value: "\(limit)")
             ]
+        case .deletePost:
+            return nil
         }}
     
     var body: Data? { nil }

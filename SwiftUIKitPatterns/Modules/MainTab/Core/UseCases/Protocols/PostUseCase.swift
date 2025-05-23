@@ -7,4 +7,5 @@
 
 protocol PostUseCase {
     func loadPostsList(start: Int, limit: Int) async throws -> [Post]
+    func deletePost(postId: Int) async throws
 }

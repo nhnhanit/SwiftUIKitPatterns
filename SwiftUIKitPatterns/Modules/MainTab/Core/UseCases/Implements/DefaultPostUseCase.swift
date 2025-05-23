@@ -18,4 +18,7 @@ final class DefaultPostUseCase: PostUseCase {
         return try await repository.fetchPostsList(start: start, limit: limit)
     }
     
+    func deletePost(postId: Int) async throws {
+        try await repository.deletePost(postId: postId)
+    }
 }

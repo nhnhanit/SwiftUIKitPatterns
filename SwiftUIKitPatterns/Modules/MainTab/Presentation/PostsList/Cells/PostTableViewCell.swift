@@ -7,10 +7,17 @@
 
 import UIKit
 
+protocol PostTableViewCellDelegate: AnyObject {
+    func postCellDidTapDelete(_ cell: PostTableViewCell)
+}
+
 class PostTableViewCell: UITableViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var bodyLabel: UILabel!
+    @IBOutlet weak var deleteButton: UIButton!
+    
+    weak var delegate: PostTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,5 +33,10 @@ class PostTableViewCell: UITableViewCell {
     func configure(with post: Post) {
         titleLabel.text = "#\(post.id). " + post.title
         bodyLabel.text = post.body
+        
+    }
+    
+    @IBAction func didTapDeleteButton(_ sender: Any) {
+        delegate?.postCellDidTapDelete(self)
     }
 }
