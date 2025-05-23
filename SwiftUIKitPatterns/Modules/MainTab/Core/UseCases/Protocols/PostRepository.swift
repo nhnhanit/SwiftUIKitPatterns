@@ -7,5 +7,5 @@
 
 
 protocol PostRepository {
-    func fetchPostsList() async throws -> [Post]
+    func fetchPostsList(start: Int, limit: Int) async throws -> [Post]
 }

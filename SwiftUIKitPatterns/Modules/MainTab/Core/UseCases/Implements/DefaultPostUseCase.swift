@@ -14,8 +14,8 @@ final class DefaultPostUseCase: PostUseCase {
         self.repository = repository
     }
     
-    func loadPostsList() async throws -> [Post] {
-        return try await repository.fetchPostsList()
+    func loadPostsList(start: Int, limit: Int) async throws -> [Post] {
+        return try await repository.fetchPostsList(start: start, limit: limit)
     }
     
 }

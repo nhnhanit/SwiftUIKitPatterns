@@ -72,18 +72,26 @@ final class LoginViewController: UIViewController {
         phoneTextField
             .publisher(for: \.text)
             .compactMap { $0 }
-            .sink { [weak self] in self?.viewModel.phoneNumber = $0 }
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                self.viewModel.phoneNumber = $0
+            }
             .store(in: &cancellables)
         
         viewModel.$isLoading
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
-                isLoading ? self?.showLoadingIndicator() : self?.hideLoadingIndicator()
+                guard let self = self else { return }
+                
+                isLoading ? self.showLoadingIndicator() : self.hideLoadingIndicator()
             }
             .store(in: &cancellables)
         
-        viewModel.onShowAlert = { alertModel in
-            AlertManager.shared.show(alertModel)
+        viewModel.onShowAlert = { [weak self] alertModel in
+            guard let self = self else { return }
+            
+            AlertManager.shared.show(alertModel, from: self)
         }
         
     }

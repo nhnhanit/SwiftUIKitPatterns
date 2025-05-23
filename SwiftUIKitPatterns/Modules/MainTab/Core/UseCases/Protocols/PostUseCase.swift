@@ -6,5 +6,5 @@
 //
 
 protocol PostUseCase {
-    func loadPostsList() async throws -> [Post]
+    func loadPostsList(start: Int, limit: Int) async throws -> [Post]
 }

@@ -84,7 +84,11 @@ final class OTPVerifyViewController: UIViewController {
         otpTextField
             .publisher(for: \.text)
             .compactMap { $0 }
-            .sink { [weak self] in self?.viewModel.otpCode = $0 }
+            .sink { [weak self] in
+                guard let self = self else { return }
+                
+                self.viewModel.otpCode = $0
+            }
             .store(in: &cancellables)
     }
 

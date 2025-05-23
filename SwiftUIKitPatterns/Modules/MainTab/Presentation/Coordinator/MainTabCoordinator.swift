@@ -24,10 +24,10 @@ final class MainTabCoordinator {
         let postUseCase = DefaultPostUseCase(repository: postRepository)
 
         let postsListViewModel = PostsListViewModel(postUseCase: postUseCase)
-        let homeVC = PostsListModuleBuilder.build(viewModel: postsListViewModel)
-        homeVC.title = "Home"
-        let homeNav = UINavigationController(rootViewController: homeVC)
-        homeNav.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)
+        let postsListVC = PostsListModuleBuilder.build(viewModel: postsListViewModel)
+        postsListVC.title = "Posts List"
+        let postsListNav = UINavigationController(rootViewController: postsListVC)
+        postsListNav.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)
         
         let settingsVC = SettingsModuleBuilder.build(navigator: self)
         settingsVC.title = "Settings"
@@ -35,7 +35,7 @@ final class MainTabCoordinator {
         settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
         
         self.settingsNav = settingsNav
-        tabBarController.viewControllers = [homeNav, settingsNav]
+        tabBarController.viewControllers = [postsListNav, settingsNav]
         
         switch tab {
         case .home:

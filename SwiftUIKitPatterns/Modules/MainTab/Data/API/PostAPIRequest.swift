@@ -9,14 +9,14 @@ import Foundation
 
 enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
     
-    case fetchPosts
+    case fetchPosts(start: Int, limit: Int)
     
     var requiresAuthorization: Bool {
         switch self {
         case .fetchPosts:
             return false // API public dont need accessToken
-//        case .fetchComments, .fetchUser, .deletePost:
-//            return true
+            //        case .fetchComments, .fetchUser, .deletePost:
+            //            return true
         }
     }
     
@@ -42,7 +42,14 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
         authorizedHeaders(baseHeaders: ["Content-Type": "application/json; charset=UTF-8"])
     }
     
-    var queryItems: [URLQueryItem]? { nil }
+    var queryItems: [URLQueryItem]? {
+        switch self {
+        case let .fetchPosts(start, limit):
+            return [
+                URLQueryItem(name: "_start", value: "\(start)"),
+                URLQueryItem(name: "_limit", value: "\(limit)")
+            ]
+        }}
     
     var body: Data? { nil }
 }
