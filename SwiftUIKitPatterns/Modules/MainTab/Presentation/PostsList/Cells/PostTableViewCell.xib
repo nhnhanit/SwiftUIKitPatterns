@@ -17,7 +17,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0up-HY-1dj">
-                        <rect key="frame" x="16" y="8" width="288" height="96"/>
+                        <rect key="frame" x="16" y="8" width="288" height="40.666666666666664"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#1. Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Ml-KD-nhF">
                                 <rect key="frame" x="0.0" y="0.0" width="288" height="20.333333333333332"/>
@@ -26,16 +26,26 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Body" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mw7-py-ZpJ">
-                                <rect key="frame" x="0.0" y="20.333333333333329" width="288" height="25.666666666666671"/>
+                                <rect key="frame" x="0.0" y="20.333333333333336" width="288" height="20.333333333333336"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pyv-yX-GhG">
-                                <rect key="frame" x="0.0" y="46" width="288" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="WCQ-t6-FEO"/>
-                                </constraints>
+                        </subviews>
+                    </stackView>
+                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="QAW-9p-rfF">
+                        <rect key="frame" x="16" y="64.666666666666671" width="188.66666666666666" height="39.333333333333329"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g9b-xI-qsW">
+                                <rect key="frame" x="0.0" y="0.66666666666665719" width="84.333333333333329" height="38.333333333333336"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Favorite"/>
+                                <connections>
+                                    <action selector="didTapFavoriteButton:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="UuX-Sc-cKg"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pyv-yX-GhG">
+                                <rect key="frame" x="104.33333333333334" y="0.66666666666665719" width="84.333333333333343" height="38.333333333333336"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Delete"/>
                                 <connections>
@@ -46,16 +56,19 @@
                     </stackView>
                 </subviews>
                 <constraints>
+                    <constraint firstAttribute="bottom" secondItem="QAW-9p-rfF" secondAttribute="bottom" constant="16" id="0cn-Vc-EqW"/>
                     <constraint firstItem="0up-HY-1dj" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="BL8-Ku-l0r"/>
                     <constraint firstAttribute="trailing" secondItem="0up-HY-1dj" secondAttribute="trailing" constant="16" id="Mpu-PF-sJ7"/>
-                    <constraint firstAttribute="bottom" secondItem="0up-HY-1dj" secondAttribute="bottom" constant="16" id="gQM-Pb-g50"/>
                     <constraint firstItem="0up-HY-1dj" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="hcu-we-a4c"/>
+                    <constraint firstItem="QAW-9p-rfF" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="16" id="jJA-Yx-lCi"/>
+                    <constraint firstItem="QAW-9p-rfF" firstAttribute="top" secondItem="0up-HY-1dj" secondAttribute="bottom" constant="16" id="m0q-x6-2zk"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="bodyLabel" destination="mw7-py-ZpJ" id="bjX-HZ-v0h"/>
                 <outlet property="deleteButton" destination="pyv-yX-GhG" id="XOb-2a-FvP"/>
+                <outlet property="favoriteButton" destination="g9b-xI-qsW" id="o3k-OI-lgZ"/>
                 <outlet property="titleLabel" destination="7Ml-KD-nhF" id="9aD-Y8-xLF"/>
             </connections>
             <point key="canvasLocation" x="85" y="-12"/>

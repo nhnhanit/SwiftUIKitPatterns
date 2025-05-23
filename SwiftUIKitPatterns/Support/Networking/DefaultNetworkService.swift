@@ -32,7 +32,7 @@ final class DefaultNetworkService: NetworkServicing {
         
         do {
             let (data, response) = try await session.data(for: urlRequest)
-//            NetworkLogger.log(response: response, data: data)
+            NetworkLogger.log(response: response, data: data)
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.unknown(URLError(.badServerResponse))

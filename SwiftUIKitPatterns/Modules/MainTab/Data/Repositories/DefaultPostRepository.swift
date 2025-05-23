@@ -22,4 +22,11 @@ final class DefaultPostRepository: PostRepository {
     func deletePost(postId: Int) async throws {
         let emptyResponse: EmptyResponse = try await network.send(PostAPIRequest.deletePost(postId: postId))
     }
+    
+    func updatePost(postId: Int, isFavorite: Bool) async throws -> Post {
+        let updatePostModel: UpdatePostModel = UpdatePostModel(isFavorite: isFavorite)
+        let post: Post = try await network.send(PostAPIRequest.updatePost(postId: postId, updatePostModel: updatePostModel))
+        
+        return post
+    }
 }

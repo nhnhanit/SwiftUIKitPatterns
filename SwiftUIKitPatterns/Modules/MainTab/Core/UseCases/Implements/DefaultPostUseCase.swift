@@ -21,4 +21,8 @@ final class DefaultPostUseCase: PostUseCase {
     func deletePost(postId: Int) async throws {
         try await repository.deletePost(postId: postId)
     }
+    
+    func updatePost(postId: Int, isFavorite: Bool) async throws -> Post {
+        return try await repository.updatePost(postId: postId, isFavorite: isFavorite)
+    }
 }

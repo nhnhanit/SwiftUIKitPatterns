@@ -25,78 +25,98 @@ final class PostsListViewModel {
         self.postUseCase = postUseCase
     }
     
-    func fetchPosts(isLoadMore: Bool = false) {
-        Task {
+    func fetchPosts(isLoadMore: Bool = false) async {
+        
+        // Prevent duplicate loading calls
+        guard await !isLoading else { return }
+
+        // Mark loading state on main thread
+        await MainActor.run {
+            isLoading = true
+            self.isLoadMore = isLoadMore
+        }
+
+        // Ensure loading state resets even if an error occurs
+        defer {
+            Task { @MainActor in
+                isLoading = false
+                self.isLoadMore = false
+            }
+        }
+
+        do {
+            // Calculate offset
+            let start = currentPage * pageSize
             
-            if await self.isLoading { return }
-            
+            // Load posts from use case
+            let newPosts = try await postUseCase.loadPostsList(start: start, limit: pageSize)
+
+            // Update UI and internal state on main thread
             await MainActor.run {
-                self.isLoading = true
-                self.isLoadMore = isLoadMore
-            }
-            
-            defer {
-                Task { @MainActor in
-                    self.isLoading = false
-                    self.isLoadMore = false
+                if isLoadMore {
+                    posts.append(contentsOf: newPosts)
+                } else {
+                    posts = newPosts
+                }
+
+                if newPosts.count < pageSize {
+                    isLastPage = true
+                } else {
+                    currentPage += 1
                 }
             }
-
-            do {
-                let start = currentPage * pageSize
-                let newPosts = try await postUseCase.loadPostsList(start: start, limit: pageSize)
-
-                await MainActor.run {
-                    if isLoadMore {
-                        self.posts.append(contentsOf: newPosts)
-                    } else {
-                        self.posts = newPosts
-                    }
-
-                    if newPosts.count < self.pageSize {
-                        self.isLastPage = true
-                    } else {
-                        self.currentPage += 1
-                    }
-                }
-                
-            } catch {
-                await MainActor.run {
-                    let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
-                    onShowAlert?(alertModel)
-                }
+        } catch {
+            // Show alert if loading fails
+            await MainActor.run {
+                let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+                onShowAlert?(alertModel)
             }
         }
     }
     
     func loadMoreIfNeeded(currentIndex: Int) {
         Task {
-            if await self.isLastPage { return }
+            // Check isLastPage safely
+            guard !(await self.isLastPage) else { return }
 
+            // Get current count on main thread
             let count = await MainActor.run { self.posts.count }
+
+            // Only load more if near the end
             guard currentIndex >= count - 5 else { return }
-            
-            fetchPosts(isLoadMore: true)
+
+            await fetchPosts(isLoadMore: true)
         }
     }
     
     func refreshPosts() {
-        Task { @MainActor in
-            self.isLastPage = false
-            self.currentPage = 0
-            fetchPosts()
+        Task {
+            // Reset flags and page on main thread
+            await MainActor.run {
+                self.isLastPage = false
+                self.currentPage = 0
+            }
+
+            await fetchPosts()
         }
     }
     
     func deletePost(postId: Int) async -> Bool {
-        guard await !deletingPostIds.contains(postId) else {
-            return false // đang xoá, không xử lý nữa
+        // Ensure thread-safe access to deletingPostIds on the main actor
+        let alreadyDeleting = await MainActor.run {
+            return deletingPostIds.contains(postId)
+        }
+        
+        guard !alreadyDeleting else {
+            return false // Skip if deletion already in progress
         }
 
+        // Mark post as being deleted
         await MainActor.run {
-            let _ = deletingPostIds.insert(postId)
+            _ = deletingPostIds.insert(postId)
         }
 
+        // Ensure cleanup happens regardless of success/failure
         defer {
             Task { @MainActor in
                 deletingPostIds.remove(postId)
@@ -104,9 +124,11 @@ final class PostsListViewModel {
         }
 
         do {
-            let _ = try await postUseCase.deletePost(postId: postId)
+            // Perform the deletion
+            _ = try await postUseCase.deletePost(postId: postId)
             return true
         } catch {
+            // Show alert on main thread if an error occurs
             await MainActor.run {
                 let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
                 onShowAlert?(alertModel)
@@ -118,5 +140,25 @@ final class PostsListViewModel {
     @MainActor
     func removePost(postId: Int) {
         self.posts.removeAll { $0.id == postId }
+    }
+    
+    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
+        do {
+            let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
+            return updatedPost
+        } catch {
+            await MainActor.run {
+                let alert = AlertModel(title: "Error", message: error.localizedDescription)
+                onShowAlert?(alert)
+            }
+            return nil
+        }
+    }
+
+    @MainActor
+    func updatePost(_ post: Post) {
+        if let index = posts.firstIndex(where: { $0.id == post.id }) {
+            posts[index] = post
+        }
     }
 }

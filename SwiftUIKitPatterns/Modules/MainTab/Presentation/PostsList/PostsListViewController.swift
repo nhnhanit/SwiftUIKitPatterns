@@ -60,82 +60,79 @@ final class PostsListViewController: UIViewController {
     }
     
     private func bindViewModel() {
+        // Observe posts changes
         viewModel.$posts
             .receive(on: DispatchQueue.main)
             .sink { [weak self] posts in
-                guard let self = self else { return }
-                
+                guard let self else { return }
                 self.tableView.reloadData()
                 self.navigationItem.title = "Posts List \(posts.count)"
                 
-                // 👇 Dừng refresh nếu đang refreshing
                 if self.refreshControl.isRefreshing {
                     self.refreshControl.endRefreshing()
                 }
             }
             .store(in: &cancellables)
         
+        // Observe loading state
         viewModel.$isLoading
             .receive(on: RunLoop.main)
             .sink { [weak self] isLoading in
-                guard let self = self else { return }
-                
+                guard let self else { return }
                 isLoading ? self.showLoadingIndicator() : self.hideLoadingIndicator()
-                
             }
             .store(in: &cancellables)
         
+        // Observe if last page is reached
         viewModel.$isLastPage
             .receive(on: RunLoop.main)
             .sink { [weak self] isLastPage in
-                guard let self = self else { return }
-                
-                // 👉 Khi đã hết dữ liệu (cuối danh sách)
+                guard let self else { return }
                 if isLastPage {
-                    self.endOfListFooterView.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 44)
                     self.tableView.tableFooterView = self.endOfListFooterView
                 } else {
                     self.tableView.tableFooterView = UIView()
                 }
-                
             }
             .store(in: &cancellables)
         
+        // Show alert from view model
         viewModel.onShowAlert = { alertModel in
             AlertManager.shared.show(alertModel)
         }
         
-        viewModel.fetchPosts()
+        // Initial load
+        Task {
+            await viewModel.fetchPosts()
+        }
     }
     
     @objc private func didPullToRefresh() {
-        // Chỉ thực hiện nếu user đang kéo tableView
+        // Prevent accidental refresh triggers
         guard tableView.isDragging else {
-            refreshControl.endRefreshing() // Dừng lại ngay nếu không phải pull
+            refreshControl.endRefreshing()
             return
         }
         
-        viewModel.refreshPosts() // Refresh lại từ đầu
+        viewModel.refreshPosts()
         refreshControl.endRefreshing()
     }
 }
 
 extension PostsListViewController: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.posts.count
+        viewModel.posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostTableViewCell", for: indexPath) as? PostTableViewCell else {
             return UITableViewCell()
         }
         
         let post = viewModel.posts[indexPath.row]
-        
         cell.delegate = self
         cell.configure(with: post)
-        
         return cell
     }
     
@@ -145,21 +142,20 @@ extension PostsListViewController: UITableViewDataSource {
 }
 
 extension PostsListViewController: UITableViewDelegate {
-    // Có thể thêm các hàm delegate khác nếu cần, ví dụ:
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true) // Bỏ chọn cell ngay lập tức
+        tableView.deselectRow(at: indexPath, animated: true)
         let selectedPost = viewModel.posts[indexPath.row]
         print("didSelectRowAt: \(selectedPost.id) - \(selectedPost.title)")
-        // TODO: Điều hướng đến màn hình chi tiết bài viết
+        // TODO: Navigate to post detail screen
     }
     
-    // Tùy chỉnh chiều cao của cell nếu cần
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100 // Giá trị ước tính, giúp tableView tính toán nhanh hơn
+        100
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension // Cho phép cell tự động tính chiều cao
+        UITableView.automaticDimension
     }
 }
 
@@ -178,6 +174,17 @@ extension PostsListViewController: PostTableViewCellDelegate {
         }
     }
     
+    func postCellDidTapFavorite(_ cell: PostTableViewCell, post: Post) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        
+        Task {
+            let newValue = !post.isFavorite
+            let updatedPost = await viewModel.updateFavorite(postId: post.id, isFavorite: newValue)
+            guard let updatedPost else { return }
+            
+            viewModel.updatePost(updatedPost)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
 }
-
-

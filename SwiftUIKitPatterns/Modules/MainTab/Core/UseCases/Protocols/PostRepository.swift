@@ -9,4 +9,5 @@
 protocol PostRepository {
     func fetchPostsList(start: Int, limit: Int) async throws -> [Post]
     func deletePost(postId: Int) async throws
+    func updatePost(postId: Int, isFavorite: Bool) async throws -> Post
 }
