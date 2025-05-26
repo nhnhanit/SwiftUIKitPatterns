@@ -20,9 +20,11 @@ final class PostsListViewModel {
     private let postUseCase: PostUseCase
     private var currentPage = 0
     private let pageSize = 20
+    private let navigator: PostNavigator
     
-    init(postUseCase: PostUseCase) {
+    init(postUseCase: PostUseCase, navigator: PostNavigator) {
         self.postUseCase = postUseCase
+        self.navigator = navigator
     }
     
     func fetchPosts(isLoadMore: Bool = false) async {
@@ -160,5 +162,9 @@ final class PostsListViewModel {
         if let index = posts.firstIndex(where: { $0.id == post.id }) {
             posts[index] = post
         }
+    }
+    
+    func goToPostDetail(postId: Int) {
+        navigator.navigateToPostDetail(postId: postId)
     }
 }

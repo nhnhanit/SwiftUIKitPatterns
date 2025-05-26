@@ -147,7 +147,8 @@ extension PostsListViewController: UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         let selectedPost = viewModel.posts[indexPath.row]
         print("didSelectRowAt: \(selectedPost.id) - \(selectedPost.title)")
-        // TODO: Navigate to post detail screen
+        
+        viewModel.goToPostDetail(postId: selectedPost.id)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {

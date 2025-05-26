@@ -17,17 +17,25 @@ final class MainTabCoordinator {
     var onLogout: (() -> Void)?
     
     var settingsNav: UINavigationController?
+    var postsListNav: UINavigationController?
     
     func start(withInitialTab tab: MainTab) -> UITabBarController {
+        
+        // MARK: - postsListNav
+        
         let networkService = DefaultNetworkService()
         let postRepository = DefaultPostRepository(network: networkService)
         let postUseCase = DefaultPostUseCase(repository: postRepository)
 
-        let postsListViewModel = PostsListViewModel(postUseCase: postUseCase)
+        let postsListViewModel = PostsListViewModel(postUseCase: postUseCase, navigator: self)
         let postsListVC = PostsListModuleBuilder.build(viewModel: postsListViewModel)
         postsListVC.title = "Posts List"
         let postsListNav = UINavigationController(rootViewController: postsListVC)
         postsListNav.tabBarItem = UITabBarItem(title: "Home", image: nil, tag: 0)
+        
+        self.postsListNav = postsListNav
+        
+        // MARK: - settingsNav
         
         let settingsVC = SettingsModuleBuilder.build(navigator: self)
         settingsVC.title = "Settings"
@@ -35,6 +43,8 @@ final class MainTabCoordinator {
         settingsNav.tabBarItem = UITabBarItem(title: "Settings", image: nil, tag: 1)
         
         self.settingsNav = settingsNav
+        
+        // MARK: - tabBarController
         tabBarController.viewControllers = [postsListNav, settingsNav]
         
         switch tab {

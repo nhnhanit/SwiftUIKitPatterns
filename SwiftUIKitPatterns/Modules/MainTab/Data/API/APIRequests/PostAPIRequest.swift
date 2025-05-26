@@ -9,15 +9,18 @@ import Foundation
 
 enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
     
-    case fetchPosts(start: Int, limit: Int)
+    case getPostsList(start: Int, limit: Int)
     case deletePost(postId: Int)
     case updatePost(postId: Int, updatePostModel: UpdatePostModel)
+    case getPostDetail(postId: Int)
+    case getCommentsList(postId: Int, start: Int, limit: Int)
+    case getUserDetail(userId: Int)
     
     var requiresAuthorization: Bool {
         switch self {
-        case .fetchPosts:
+        case .getPostsList, .getPostDetail:
             return false // API public dont need accessToken
-        case .deletePost, .updatePost:
+        case .deletePost, .updatePost, .getUserDetail, .getCommentsList:
             return true
         }
     }
@@ -28,18 +31,24 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
     
     var path: String {
         switch self {
-        case .fetchPosts:
+        case .getPostsList:
             return "/posts"
         case .deletePost(let postId):
             return "/posts/\(postId)"
         case .updatePost(let postId, _):
             return "/posts/\(postId)"
+        case .getPostDetail(let postId):
+            return "/posts/\(postId)"
+        case .getCommentsList(let postId, _, _):
+            return "/posts/\(postId)/comments"
+        case .getUserDetail(let userId):
+            return "/users/\(userId)"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .fetchPosts:
+        case .getPostsList, .getPostDetail, .getCommentsList, .getUserDetail:
             return .get
         case .deletePost:
             return .delete
@@ -54,7 +63,12 @@ enum PostAPIRequest: APIRequest, AuthorizedRequestBuilder {
     
     var queryItems: [URLQueryItem]? {
         switch self {
-        case let .fetchPosts(start, limit):
+        case let .getPostsList(start, limit):
+            return [
+                URLQueryItem(name: "_start", value: "\(start)"),
+                URLQueryItem(name: "_limit", value: "\(limit)")
+            ]
+        case let .getCommentsList(_, start, limit):
             return [
                 URLQueryItem(name: "_start", value: "\(start)"),
                 URLQueryItem(name: "_limit", value: "\(limit)")

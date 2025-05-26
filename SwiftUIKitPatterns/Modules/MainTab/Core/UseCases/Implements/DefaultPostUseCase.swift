@@ -15,7 +15,7 @@ final class DefaultPostUseCase: PostUseCase {
     }
     
     func loadPostsList(start: Int, limit: Int) async throws -> [Post] {
-        return try await repository.fetchPostsList(start: start, limit: limit)
+        return try await repository.getPostsList(start: start, limit: limit)
     }
     
     func deletePost(postId: Int) async throws {
@@ -24,5 +24,9 @@ final class DefaultPostUseCase: PostUseCase {
     
     func updatePost(postId: Int, isFavorite: Bool) async throws -> Post {
         return try await repository.updatePost(postId: postId, isFavorite: isFavorite)
+    }
+    
+    func loadPostDetail(postId: Int) async throws -> Post {
+        return try await repository.getPostDetail(postId: postId)
     }
 }
