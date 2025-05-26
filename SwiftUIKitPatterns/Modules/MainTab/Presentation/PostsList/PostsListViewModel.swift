@@ -10,9 +10,9 @@ import Foundation
 
 final class PostsListViewModel {
     @MainActor @Published private(set) var posts: [Post] = []
-    @MainActor @Published private(set) var isLoading: Bool = false        // loading lần đầu
-    @MainActor @Published private(set) var isLoadMore: Bool = false       // loading thêm
-    @MainActor @Published private(set) var isLastPage: Bool = false       // không còn dữ liệu
+    @MainActor @Published private(set) var isLoading: Bool = false        // loading first time
+    @MainActor @Published private(set) var isLoadMore: Bool = false       // loading more
+    @MainActor @Published private(set) var isLastPage: Bool = false       // latest page
     @MainActor private(set) var deletingPostIds: Set<Int> = []
 
     var onShowAlert: ((AlertModel) -> Void)?
