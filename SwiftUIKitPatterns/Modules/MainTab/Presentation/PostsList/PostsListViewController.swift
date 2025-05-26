@@ -62,7 +62,7 @@ final class PostsListViewController: UIViewController {
     private func bindViewModel() {
         // Observe posts changes
         viewModel.$posts
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink { [weak self] posts in
                 guard let self else { return }
                 self.tableView.reloadData()

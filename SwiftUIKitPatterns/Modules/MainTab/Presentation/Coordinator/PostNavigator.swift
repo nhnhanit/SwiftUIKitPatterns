@@ -32,6 +32,7 @@ extension MainTabCoordinator: PostNavigator {
                                                coordinator: self)
         
         let postDetailVC = PostDetailModuleBuilder.build(viewModel: postDetailVM)
+        postDetailVC.hidesBottomBarWhenPushed = true
         self.postsListNav?.pushViewController(postDetailVC, animated: true)
     }
     

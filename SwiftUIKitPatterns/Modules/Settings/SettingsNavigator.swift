@@ -23,6 +23,8 @@ extension MainTabCoordinator: SettingsNavigator {
     
     func navigateToUserProfile() {
         let userProfileVC = UserProfileViewController()
+        userProfileVC.hidesBottomBarWhenPushed = true
+        
         self.settingsNav?.pushViewController(userProfileVC, animated: true)
     }
 }
