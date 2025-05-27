@@ -165,6 +165,6 @@ final class PostsListViewModel {
     }
     
     func goToPostDetail(postId: Int) {
-        navigator.navigateToPostDetail(postId: postId)
+        navigator.navigateToPostDetail(postId: postId, postsListVM: self)
     }
 }

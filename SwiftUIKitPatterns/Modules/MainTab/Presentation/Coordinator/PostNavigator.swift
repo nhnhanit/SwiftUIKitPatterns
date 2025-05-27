@@ -6,14 +6,13 @@
 //
 
 protocol PostNavigator: AnyObject {
-    func navigateToPostDetail(postId: Int)
+    func navigateToPostDetail(postId: Int, postsListVM: PostsListViewModel)
     func backToPostsList()
 }
 
 extension MainTabCoordinator: PostNavigator {
     
-    func navigateToPostDetail(postId: Int) {
-        print("navigateToPostDetail")
+    func navigateToPostDetail(postId: Int, postsListVM: PostsListViewModel) {
         let networkService = DefaultNetworkService()
         
         let postRepository = DefaultPostRepository(network: networkService)
@@ -33,10 +32,23 @@ extension MainTabCoordinator: PostNavigator {
         
         let postDetailVC = PostDetailModuleBuilder.build(viewModel: postDetailVM)
         postDetailVC.hidesBottomBarWhenPushed = true
+        
+        postDetailVM.onFavorite = { post in
+            await postsListVM.updatePost(post)
+        }
+        
+//        postDetailVM.onDelete = { post in
+//            postsListVM.removePost(postId: post.id)
+//        }
+        
         self.postsListNav?.pushViewController(postDetailVC, animated: true)
     }
     
     func backToPostsList() {
-        print("backToPostsList")
+        Task {
+            await MainActor.run {
+                postsListNav?.popViewController(animated: true)
+            }
+        }
     }
 }

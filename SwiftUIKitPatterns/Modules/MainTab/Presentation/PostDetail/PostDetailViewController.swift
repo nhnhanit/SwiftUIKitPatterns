@@ -45,10 +45,10 @@ final class PostDetailViewController: UIViewController {
         bodyLabel.numberOfLines = 0
         userLabel.font = .italicSystemFont(ofSize: 14)
         
-        let deleteButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(deleteTapped))
+        let deleteButton = UIBarButtonItem(title: "Delete", style: .plain, target: self, action: #selector(didTapDeleteButton))
         navigationItem.rightBarButtonItems = [deleteButton]
         
-        favoriteSwitch.addTarget(self, action: #selector(favoriteToggled), for: .valueChanged)
+        favoriteSwitch.addTarget(self, action: #selector(didTapFavoriteButton), for: .valueChanged)
         
         let content = UIStackView(arrangedSubviews: [titleLabel, bodyLabel, favoriteSwitch, userLabel])
         content.axis = .vertical
@@ -83,7 +83,7 @@ final class PostDetailViewController: UIViewController {
             .receive(on: RunLoop.main)
             .sink { [weak self] post in
                 guard let post = post else { return }
-                self?.titleLabel.text = post.title
+                self?.titleLabel.text = "#\(post.id). " + post.title
                 self?.bodyLabel.text = post.body
                 self?.favoriteSwitch.isOn = post.isFavorite
             }
@@ -104,16 +104,41 @@ final class PostDetailViewController: UIViewController {
             }
             .store(in: &cancellables)
         
+        // Show alert from view model
+        viewModel.onShowAlert = { alertModel in
+            AlertManager.shared.show(alertModel)
+        }
+        
         Task {
             await viewModel.loadData()
         }
     }
     
-    @objc private func deleteTapped() {
-        //        viewModel.deletePost()
+    @objc private func didTapDeleteButton() {
+        guard let post = viewModel.post else { return }
+        
+        Task {
+            let success = await viewModel.deletePost(postId: post.id)
+            guard success else { return }
+            
+            // Update UI
+            viewModel.removePost(post: post)
+            viewModel.coordinator.backToPostsList()
+        }
     }
     
-    @objc private func favoriteToggled() {
-        //        viewModel.toggleFavorite()
+    @objc private func didTapFavoriteButton() {
+        Task {
+            await viewModel.favoriteButtonTapped()
+        }
+//        guard let post = viewModel.post else { return }
+//        
+//        Task {
+//            let newValue = !post.isFavorite
+//            let updatedPost = await viewModel.updateFavorite(postId: post.id, isFavorite: newValue)
+//            guard let updatedPost else { return }
+//            
+//            await viewModel.updatePost(updatedPost)
+//        }
     }
 }

@@ -13,12 +13,14 @@ final class PostDetailViewModel {
     @MainActor @Published private(set) var comments: [Comment] = []
     @MainActor @Published private(set) var isLoading: Bool = false        // loading first time
     var onShowAlert: ((AlertModel) -> Void)?
+    var onFavorite: ((Post) async -> Void)?
+    var onDelete: ((Post) -> Void)?
     
     private let postId: Int
     private let postUseCase: PostUseCase
     private let userUseCase: UserUseCase
     private let commentUseCase: CommentUseCase
-    private let coordinator: PostNavigator
+    let coordinator: PostNavigator
     
     init(postId: Int,
          postUseCase: PostUseCase,
@@ -66,9 +68,8 @@ final class PostDetailViewModel {
                 self.comments = comments
             }
         } catch {
-            await MainActor.run {
-                onShowAlert?(AlertModel(title: "Error", message: error.localizedDescription))
-            }
+            onShowAlert?(AlertModel(title: "Error", message: error.localizedDescription))
+
         }
     }
     
@@ -83,10 +84,53 @@ final class PostDetailViewModel {
                 self.user = user
             }
         } catch {
-            await MainActor.run {
-                onShowAlert?(AlertModel(title: "Error", message: error.localizedDescription))
+            onShowAlert?(AlertModel(title: "Error", message: error.localizedDescription))
+        }
+    }
+    
+    func favoriteButtonTapped() {
+        Task {
+            guard let post = await self.post else { return }
+            let newValue = !post.isFavorite
+            
+            if let updatedPost = await updateFavorite(postId: post.id, isFavorite: newValue) {
+                await updatePost(updatedPost)
+                await self.onFavorite?(updatedPost) // Call back to Update UI on PostsList
             }
         }
+    }
+    
+    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
+        do {
+            let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
+            return updatedPost
+        } catch {
+            let alert = AlertModel(title: "Error", message: error.localizedDescription)
+            onShowAlert?(alert)
+            return nil
+        }
+    }
+    
+    @MainActor
+    func updatePost(_ post: Post) async {
+        self.post = post // Update UI on PostDetail
+    }
+    
+    func deletePost(postId: Int) async -> Bool {
+        do {
+            // Perform the deletion
+            _ = try await postUseCase.deletePost(postId: postId)
+            return true
+        } catch {
+            let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+            onShowAlert?(alertModel)
+            return false
+        }
+    }
+    
+    @MainActor
+    func removePost(post: Post) {
+        onDelete?(post) // Callback to PostsList to update ui
     }
     
 }
