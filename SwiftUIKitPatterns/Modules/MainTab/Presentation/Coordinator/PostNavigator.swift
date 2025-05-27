@@ -5,6 +5,8 @@
 //  Created by hongnhan on 26/5/25.
 //
 
+import Foundation
+
 protocol PostNavigator: AnyObject {
     func navigateToPostDetail(postId: Int, postsListVM: PostsListViewModel)
     func backToPostsList()
@@ -37,18 +39,18 @@ extension MainTabCoordinator: PostNavigator {
             await postsListVM.updatePost(post)
         }
         
-//        postDetailVM.onDelete = { post in
-//            postsListVM.removePost(postId: post.id)
-//        }
+        postDetailVM.onDelete = { post in
+            await postsListVM.removePost(postId: post.id)
+        }
         
-        self.postsListNav?.pushViewController(postDetailVC, animated: true)
+        DispatchQueue.main.async {
+            self.postsListNav?.pushViewController(postDetailVC, animated: true)
+        }
     }
     
     func backToPostsList() {
-        Task {
-            await MainActor.run {
-                postsListNav?.popViewController(animated: true)
-            }
+        DispatchQueue.main.async {
+            self.postsListNav?.popViewController(animated: true)
         }
     }
 }

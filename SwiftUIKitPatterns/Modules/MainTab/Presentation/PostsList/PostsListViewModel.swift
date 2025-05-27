@@ -118,7 +118,7 @@ extension PostsListViewModel {
         return true
     }
     
-    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
+    private func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
         do {
             let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
             return updatedPost
@@ -137,10 +137,10 @@ extension PostsListViewModel {
     }
 }
 
-// MARK: - Handle DidTapDelete & Update
+// MARK: - Handle DidTapDelete
 
 extension PostsListViewModel {
-        
+            
     func deletePost(postId: Int) async -> Bool {
         // Ensure thread-safe access to deletingPostIds on the main actor
         let alreadyDeleting = await MainActor.run {

@@ -14,7 +14,7 @@ final class PostDetailViewModel {
     @MainActor @Published private(set) var isLoading: Bool = false        // loading first time
     var onShowAlert: ((AlertModel) -> Void)?
     var onFavorite: ((Post) async -> Void)?
-    var onDelete: ((Post) -> Void)?
+    var onDelete: ((Post) async -> Void)?
     
     private let postId: Int
     private let postUseCase: PostUseCase
@@ -88,6 +88,12 @@ final class PostDetailViewModel {
         }
     }
     
+}
+
+// MARK: - Handle Favorite & Update
+
+extension PostDetailViewModel {
+    
     func favoriteButtonTapped() {
         Task {
             guard let post = await self.post else { return }
@@ -95,7 +101,7 @@ final class PostDetailViewModel {
             
             if let updatedPost = await updateFavorite(postId: post.id, isFavorite: newValue) {
                 await updatePost(updatedPost)
-                await self.onFavorite?(updatedPost) // Call back to Update UI on PostsList
+                await self.onFavorite?(updatedPost) // Update UI on PostsList
             }
         }
     }
@@ -112,25 +118,29 @@ final class PostDetailViewModel {
     }
     
     @MainActor
-    func updatePost(_ post: Post) async {
+    private func updatePost(_ post: Post) async {
         self.post = post // Update UI on PostDetail
     }
+}
+
+// MARK: - Handle DidTapDelete
+
+extension PostDetailViewModel {
     
-    func deletePost(postId: Int) async -> Bool {
+    func deleteButtonTapped() async {
         do {
+            guard let post = await self.post else { return }
+            
             // Perform the deletion
-            _ = try await postUseCase.deletePost(postId: postId)
-            return true
+            _ = try await postUseCase.deletePost(postId: post.id)
+            
+            await onDelete?(post) // Update UI PostsList
+            coordinator.backToPostsList()
         } catch {
             let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
             onShowAlert?(alertModel)
-            return false
         }
     }
     
-    @MainActor
-    func removePost(post: Post) {
-        onDelete?(post) // Callback to PostsList to update ui
-    }
     
 }

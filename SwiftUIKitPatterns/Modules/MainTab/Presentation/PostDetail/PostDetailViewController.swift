@@ -115,15 +115,8 @@ final class PostDetailViewController: UIViewController {
     }
     
     @objc private func didTapDeleteButton() {
-        guard let post = viewModel.post else { return }
-        
         Task {
-            let success = await viewModel.deletePost(postId: post.id)
-            guard success else { return }
-            
-            // Update UI
-            viewModel.removePost(post: post)
-            viewModel.coordinator.backToPostsList()
+            await viewModel.deleteButtonTapped()
         }
     }
     

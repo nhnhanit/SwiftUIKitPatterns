@@ -164,12 +164,12 @@ extension PostsListViewController: PostTableViewCellDelegate {
     
     func postCellDidTapDelete(_ cell: PostTableViewCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        
+
         Task {
             let post = viewModel.posts[indexPath.row]
             let success = await viewModel.deletePost(postId: post.id)
             guard success else { return }
-            
+ 
             viewModel.removePost(postId: post.id)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
