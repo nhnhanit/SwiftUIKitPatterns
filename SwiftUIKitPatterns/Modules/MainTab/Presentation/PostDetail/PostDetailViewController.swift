@@ -128,17 +128,6 @@ final class PostDetailViewController: UIViewController {
     }
     
     @objc private func didTapFavoriteButton() {
-        Task {
-            await viewModel.favoriteButtonTapped()
-        }
-//        guard let post = viewModel.post else { return }
-//        
-//        Task {
-//            let newValue = !post.isFavorite
-//            let updatedPost = await viewModel.updateFavorite(postId: post.id, isFavorite: newValue)
-//            guard let updatedPost else { return }
-//            
-//            await viewModel.updatePost(updatedPost)
-//        }
+        viewModel.favoriteButtonTapped()
     }
 }

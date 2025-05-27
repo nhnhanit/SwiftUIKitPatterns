@@ -69,10 +69,8 @@ final class PostsListViewModel {
             }
         } catch {
             // Show alert if loading fails
-            await MainActor.run {
-                let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
-                onShowAlert?(alertModel)
-            }
+            let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+            onShowAlert?(alertModel)
         }
     }
     
@@ -103,6 +101,46 @@ final class PostsListViewModel {
         }
     }
     
+    func goToPostDetail(postId: Int) {
+        navigator.navigateToPostDetail(postId: postId, postsListVM: self)
+    }
+}
+
+// MARK: - Handle DidTapFavorite & Update
+
+extension PostsListViewModel {
+    func favoriteButtonTapped(post: Post) async -> Bool {
+        let newValue = !post.isFavorite
+        guard let updated = await updateFavorite(postId: post.id, isFavorite: newValue) else {
+            return false
+        }
+        await updatePost(updated)
+        return true
+    }
+    
+    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
+        do {
+            let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
+            return updatedPost
+        } catch {
+            let alert = AlertModel(title: "Error", message: error.localizedDescription)
+            onShowAlert?(alert)
+            return nil
+        }
+    }
+
+    @MainActor
+    func updatePost(_ post: Post) {
+        if let index = posts.firstIndex(where: { $0.id == post.id }) {
+            posts[index] = post
+        }
+    }
+}
+
+// MARK: - Handle DidTapDelete & Update
+
+extension PostsListViewModel {
+        
     func deletePost(postId: Int) async -> Bool {
         // Ensure thread-safe access to deletingPostIds on the main actor
         let alreadyDeleting = await MainActor.run {
@@ -130,11 +168,8 @@ final class PostsListViewModel {
             _ = try await postUseCase.deletePost(postId: postId)
             return true
         } catch {
-            // Show alert on main thread if an error occurs
-            await MainActor.run {
-                let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
-                onShowAlert?(alertModel)
-            }
+            let alertModel = AlertModel(title: "Error", message: error.localizedDescription)
+            onShowAlert?(alertModel)
             return false
         }
     }
@@ -143,28 +178,5 @@ final class PostsListViewModel {
     func removePost(postId: Int) {
         self.posts.removeAll { $0.id == postId }
     }
-    
-    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
-        do {
-            let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
-            return updatedPost
-        } catch {
-            await MainActor.run {
-                let alert = AlertModel(title: "Error", message: error.localizedDescription)
-                onShowAlert?(alert)
-            }
-            return nil
-        }
-    }
-
-    @MainActor
-    func updatePost(_ post: Post) {
-        if let index = posts.firstIndex(where: { $0.id == post.id }) {
-            posts[index] = post
-        }
-    }
-    
-    func goToPostDetail(postId: Int) {
-        navigator.navigateToPostDetail(postId: postId, postsListVM: self)
-    }
 }
+

@@ -100,7 +100,7 @@ final class PostDetailViewModel {
         }
     }
     
-    func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
+    private func updateFavorite(postId: Int, isFavorite: Bool) async -> Post? {
         do {
             let updatedPost = try await postUseCase.updatePost(postId: postId, isFavorite: isFavorite)
             return updatedPost

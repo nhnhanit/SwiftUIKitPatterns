@@ -164,9 +164,9 @@ extension PostsListViewController: PostTableViewCellDelegate {
     
     func postCellDidTapDelete(_ cell: PostTableViewCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let post = viewModel.posts[indexPath.row]
         
         Task {
+            let post = viewModel.posts[indexPath.row]
             let success = await viewModel.deletePost(postId: post.id)
             guard success else { return }
             
@@ -179,11 +179,8 @@ extension PostsListViewController: PostTableViewCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         
         Task {
-            let newValue = !post.isFavorite
-            let updatedPost = await viewModel.updateFavorite(postId: post.id, isFavorite: newValue)
-            guard let updatedPost else { return }
-            
-            viewModel.updatePost(updatedPost)
+            let success = await viewModel.favoriteButtonTapped(post: post)
+            guard success else { return }
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
